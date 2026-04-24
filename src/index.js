@@ -52,6 +52,7 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
   var activityListenerBound = false;
   var fullListenerBound = false;
   var topnavSettingsOpen = false;
+  var perfModeDirty = false;
   var controlPanelOpen = false;
   var controlPanelPrevController = '';
   var controlPanelControllerReady = false;
@@ -566,8 +567,7 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
         onChange: function () {
           syncPerfMode();
           initGlareRuntime();
-          resetCardSwitches();
-          setTimeout(function () { schedulePatch(); }, 80);
+          perfModeDirty = true;
         }
       });
 
@@ -874,6 +874,11 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
       Lampa.Listener.follow('activity', function (e) {
         if (!pluginEnabled()) return;
         if (e.type === 'start' || e.type === 'activity') {
+          if (perfModeDirty) {
+            perfModeDirty = false;
+            resetCardSwitches();
+            setTimeout(function () { schedulePatch(); }, 80);
+          }
           setTimeout(function () {
             try {
               var render = e.object && e.object.activity ? e.object.activity.render() : null;
@@ -952,8 +957,7 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
         if (e.name === PERF_MODE_KEY) {
           syncPerfMode();
           initGlareRuntime();
-          resetCardSwitches();
-          setTimeout(function () { schedulePatch(); }, 80);
+          perfModeDirty = true;
           return;
         }
 
