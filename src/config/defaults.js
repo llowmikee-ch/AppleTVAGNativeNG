@@ -11,6 +11,7 @@ export const AGNATIVE_DEFAULTS = {
   ratingStyle: 'color',
   categorySize: 'md',
   cardSize: 'md',
+  logoSize: 'md',
   clockSeconds: 'off',
   controlPanel: 'off',
   perfMode: 'auto'

@@ -1,7 +1,7 @@
 export const uk = {
   nav_feed: 'Стрічка',
   badge_movie: 'ФІЛЬМ', badge_tv: 'СЕРІАЛ',
-  set_about_desc: 'Версія 0.3.8  Автори: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+  set_about_desc: 'Версія 0.3.9  Автори: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
   set_main_title: 'Основні налаштування',
   set_enable_name: 'AppleTV AgNative',
   set_enable_desc: 'Вмикає та вимикає плагін',
@@ -34,6 +34,8 @@ export const uk = {
   set_category_size_desc: 'Заголовки поличок (Популярне, Новинки тощо)',
   set_card_size_name: 'Розмір карточок',
   set_card_size_desc: 'Ширина карточок у стрічках',
+  set_logo_size_name: 'Розмір логотипу фільму',
+  set_logo_size_desc: 'Максимальна ширина логотипу на картці відносно картки медіаконтенту',
   set_clock_seconds_name: 'Секунди в годиннику',
   set_clock_seconds_desc: 'Показувати секунди поруч із годинником у шапці',
   set_control_panel_name: 'Панель за кліком на годинник',

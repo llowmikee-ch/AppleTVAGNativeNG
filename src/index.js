@@ -25,6 +25,7 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
     RATING_STYLE_KEY,
     CATEGORY_SIZE_KEY,
     CARD_SIZE_KEY,
+    LOGO_SIZE_KEY,
     CLOCK_SECONDS_KEY,
     CONTROL_PANEL_KEY,
     PERF_MODE_KEY,
@@ -38,6 +39,7 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
     RATING_STYLE_ATTR,
     CATEGORY_SIZE_ATTR,
     CARD_SIZE_ATTR,
+    LOGO_SIZE_ATTR,
     PERF_ATTR,
     FLEX_GAP_ATTR
   } = AGNATIVE_KEYS;
@@ -131,6 +133,13 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
     try {
       if (!window.Lampa || !Lampa.Storage) return 'md';
       return Lampa.Storage.get(CARD_SIZE_KEY, 'md') || 'md';
+    } catch (e) { return 'md'; }
+  }
+
+  function getLogoSize() {
+    try {
+      if (!window.Lampa || !Lampa.Storage) return 'md';
+      return Lampa.Storage.get(LOGO_SIZE_KEY, 'md') || 'md';
     } catch (e) { return 'md'; }
   }
 
@@ -240,6 +249,7 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
         document.body.removeAttribute(FONT_SIZE_ATTR);
         document.body.removeAttribute(CATEGORY_SIZE_ATTR);
         document.body.removeAttribute(CARD_SIZE_ATTR);
+        document.body.removeAttribute(LOGO_SIZE_ATTR);
         document.body.removeAttribute(BACKDROP_ATTR);
         document.body.removeAttribute(BADGE_ATTR);
         document.body.removeAttribute(RATING_ATTR);
@@ -375,6 +385,11 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
     document.body.setAttribute(CARD_SIZE_ATTR, getCardSize());
   }
 
+  function syncLogoSize() {
+    if (!document.body) return;
+    document.body.setAttribute(LOGO_SIZE_ATTR, getLogoSize());
+  }
+
   function syncCardFlags() {
     if (!document.body) return;
     document.body.setAttribute(BACKDROP_ATTR, backdropEnabled() ? 'on' : 'off');
@@ -441,10 +456,12 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
       Lampa.Storage.set(CLOCK_SECONDS_KEY, 'off');
       Lampa.Storage.set(CONTROL_PANEL_KEY, 'off');
       Lampa.Storage.set(PERF_MODE_KEY, 'auto');
+      Lampa.Storage.set(LOGO_SIZE_KEY, 'md');
       Lampa.Storage.set(TOPNAV_ITEMS_KEY, ['main', 'movie', 'tv', 'cartoon']);
       logoCache = {};
       syncGlareClass();
       syncFontSize();
+      syncLogoSize();
       syncCardFlags();
       syncPerfMode();
       resetCardSwitches();
@@ -682,6 +699,29 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
         },
         onChange: function () {
           syncCardSize();
+        }
+      });
+
+      Lampa.SettingsApi.addParam({
+        component: SETTINGS_COMPONENT,
+        param: {
+          name: LOGO_SIZE_KEY,
+          type: 'select',
+          values: {
+            xs: t('val_size_xs'),
+            sm: t('val_size_sm'),
+            md: t('val_size_md'),
+            lg: t('val_size_lg'),
+            xl: t('val_size_xl')
+          },
+          default: 'md'
+        },
+        field: {
+          name: t('set_logo_size_name'),
+          description: t('set_logo_size_desc')
+        },
+        onChange: function () {
+          syncLogoSize();
         }
       });
 
@@ -1515,6 +1555,10 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
       'body.' + BODY_CLASS + '[' + BADGE_ATTR + '="off"][' + BACKDROP_ATTR + '="off"] .nfx-card-logo { display:none !important; }',
       'body.' + BODY_CLASS + '[' + RATING_ATTR + '="off"][' + BACKDROP_ATTR + '="off"] .nfx-card-rating { display:none !important; }',
       'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay__logo { max-height:2.2em !important; max-width:78% !important; margin-bottom:.24em !important; }',
+      'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="xs"] .nfx-card-overlay__logo { max-width:50% !important; max-height:1.7em !important; }',
+      'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="sm"] .nfx-card-overlay__logo { max-width:64% !important; max-height:1.95em !important; }',
+      'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="lg"] .nfx-card-overlay__logo { max-width:90% !important; max-height:2.6em !important; }',
+      'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="xl"] .nfx-card-overlay__logo { max-width:100% !important; max-height:3.1em !important; }',
       'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay__title { font-size: calc(.95em * var(--agnative-scale, 1)) !important; font-weight:800 !important; line-height:1.16 !important; white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; }',
       'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay__meta { font-size: calc(.68em * var(--agnative-scale, 1)) !important; margin-top:.18em !important; opacity:.85 !important; white-space:normal !important; }',
       'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .card__title { display:none !important; }',
@@ -1529,7 +1573,9 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
       '  margin: 0 !important;',
       '}',
       'body.' + BODY_CLASS + ' .navigation-bar { position: fixed !important; left: 50% !important; bottom: 1.2em !important; transform: translateX(-50%) !important; z-index: 30 !important; width: 100% !important; max-width: calc(100vw - 2em) !important; font-size: 1.15em !important; padding: 0 1.5em 1em 1.5em !important; z-index: 10 !important;}',
+      'body.' + BODY_CLASS + '.orientation--landscape .navigation-bar { width: auto !important; left: auto !important; transform: translateX(0) !important; height: 85% !important; top: 15% !important; }',
       'body.' + BODY_CLASS + ' .navigation-bar__body { width: 100% !important; height: 3.6em !important; box-sizing: border-box !important; display: flex !important; align-items: center !important; justify-content: space-around !important; padding: .28em .38em !important; border-radius: 999px !important; background: rgba(22,24,30,.82) !important; border: 1px solid rgba(255,255,255,.12) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 12px 32px rgba(0,0,0,.28) !important; backdrop-filter: blur(22px) saturate(145%) !important; -webkit-backdrop-filter: blur(22px) saturate(145%) !important; font-size: 1.6em !important; }',
+      'body.' + BODY_CLASS + '.orientation--landscape .navigation-bar__body { width: auto !important; height: auto !important; }',
       'body.' + BODY_CLASS + ' .navigation-bar__item { appearance: none !important; -webkit-appearance: none !important; border: 0 !important; background: none !important; color: rgba(255,255,255,.88) !important; width: 3.04em !important; height: 3.04em !important; min-width: 3.04em !important; display: inline-flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; padding: 0 !important; border-radius: 999px !important; font-size: 1em !important; font-weight: 700 !important; line-height: 1 !important; white-space: nowrap !important; transition: background .2s ease, transform .2s ease, box-shadow .2s ease, color .2s ease !important; cursor: pointer !important; }',
       'body.' + BODY_CLASS + ' .navigation-bar__icon { width: 1.48em !important; height: 1.48em !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; color: inherit !important; }',
       'body.' + BODY_CLASS + ' .navigation-bar__icon svg { width: 1.48em !important; height: 1.48em !important; stroke-width: 2 !important; }',
@@ -2699,6 +2745,7 @@ import { GENRE_MAP_LOCALIZED, hasI18nCode, registerI18nToLampa } from './i18n/in
     syncGlareClass();
     syncFontSize();
     syncCardSize();
+    syncLogoSize();
     syncCardFlags();
     syncPerfMode();
     syncFlexGapFlag();

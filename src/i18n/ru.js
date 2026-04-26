@@ -1,7 +1,7 @@
 export const ru = {
   nav_feed: 'Лента',
   badge_movie: 'ФИЛЬМ', badge_tv: 'СЕРИАЛ',
-  set_about_desc: 'Версия 0.3.8  Авторы: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+  set_about_desc: 'Версия 0.3.9  Авторы: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
   set_main_title: 'Основные настройки',
   set_enable_name: 'AppleTV AgNative',
   set_enable_desc: 'Включает и выключает плагин',
@@ -34,6 +34,8 @@ export const ru = {
   set_category_size_desc: 'Заголовки полок (Популярное, Новинки и т.д.)',
   set_card_size_name: 'Размер карточек',
   set_card_size_desc: 'Ширина карточек в лентах',
+  set_logo_size_name: 'Размер логотипа фильма',
+  set_logo_size_desc: 'Максимальная ширина логотипа на карточке относительно карточки медиаконтента',
   set_clock_seconds_name: 'Секунды в часах',
   set_clock_seconds_desc: 'Показывать секунды рядом с часами в шапке',
   set_control_panel_name: 'Панель по клику на часы',

@@ -1,7 +1,7 @@
 export const en = {
   nav_feed: 'Feed',
   badge_movie: 'MOVIE', badge_tv: 'TV SHOW',
-  set_about_desc: 'Version 0.3.8  Authors: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+  set_about_desc: 'Version 0.3.9  Authors: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
   set_main_title: 'Main settings',
   set_enable_name: 'AppleTV AgNative',
   set_enable_desc: 'Enables and disables the plugin',
@@ -34,6 +34,8 @@ export const en = {
   set_category_size_desc: 'Section titles (Popular, New, etc.)',
   set_card_size_name: 'Card size',
   set_card_size_desc: 'Card width in rows',
+  set_logo_size_name: 'Movie logo size',
+  set_logo_size_desc: 'Maximum logo width relative to the media card',
   set_clock_seconds_name: 'Seconds in clock',
   set_clock_seconds_desc: 'Show seconds next to the header clock',
   set_control_panel_name: 'Clock click panel',
