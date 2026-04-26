@@ -34,6 +34,8 @@ export const en = {
   set_category_size_desc: 'Section titles (Popular, New, etc.)',
   set_card_size_name: 'Card size',
   set_card_size_desc: 'Card width in rows',
+  set_logo_size_name: 'Movie logo size',
+  set_logo_size_desc: 'Maximum logo width relative to the media card',
   set_clock_seconds_name: 'Seconds in clock',
   set_clock_seconds_desc: 'Show seconds next to the header clock',
   set_control_panel_name: 'Clock click panel',

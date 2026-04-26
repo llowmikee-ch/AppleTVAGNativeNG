@@ -40,6 +40,8 @@
     RATING_STYLE_ATTR: 'data-agnative-rating-style',
     CATEGORY_SIZE_ATTR: 'data-agnative-category',
     CARD_SIZE_ATTR: 'data-agnative-card-size',
+    LOGO_SIZE_KEY: 'appletv_agnative_logo_size',
+    LOGO_SIZE_ATTR: 'data-agnative-logo-size',
     PERF_ATTR: 'data-agnative-perf',
     FLEX_GAP_ATTR: 'data-agnative-flex-gap'
   };
@@ -80,6 +82,8 @@
     set_category_size_desc: 'Заголовки полок (Популярное, Новинки и т.д.)',
     set_card_size_name: 'Размер карточек',
     set_card_size_desc: 'Ширина карточек в лентах',
+    set_logo_size_name: 'Размер логотипа фильма',
+    set_logo_size_desc: 'Максимальная ширина логотипа на карточке относительно карточки медиаконтента',
     set_clock_seconds_name: 'Секунды в часах',
     set_clock_seconds_desc: 'Показывать секунды рядом с часами в шапке',
     set_control_panel_name: 'Панель по клику на часы',
@@ -128,6 +132,8 @@
     set_category_size_desc: 'Section titles (Popular, New, etc.)',
     set_card_size_name: 'Card size',
     set_card_size_desc: 'Card width in rows',
+    set_logo_size_name: 'Movie logo size',
+    set_logo_size_desc: 'Maximum logo width relative to the media card',
     set_clock_seconds_name: 'Seconds in clock',
     set_clock_seconds_desc: 'Show seconds next to the header clock',
     set_control_panel_name: 'Clock click panel',
@@ -176,6 +182,8 @@
     set_category_size_desc: 'Заголовки поличок (Популярне, Новинки тощо)',
     set_card_size_name: 'Розмір карточок',
     set_card_size_desc: 'Ширина карточок у стрічках',
+    set_logo_size_name: 'Розмір логотипу фільму',
+    set_logo_size_desc: 'Максимальна ширина логотипу на картці відносно картки медіаконтенту',
     set_clock_seconds_name: 'Секунди в годиннику',
     set_clock_seconds_desc: 'Показувати секунди поруч із годинником у шапці',
     set_control_panel_name: 'Панель за кліком на годинник',
@@ -260,6 +268,7 @@
       RATING_STYLE_KEY,
       CATEGORY_SIZE_KEY,
       CARD_SIZE_KEY,
+      LOGO_SIZE_KEY,
       CLOCK_SECONDS_KEY,
       CONTROL_PANEL_KEY,
       PERF_MODE_KEY,
@@ -273,6 +282,7 @@
       RATING_STYLE_ATTR,
       CATEGORY_SIZE_ATTR,
       CARD_SIZE_ATTR,
+      LOGO_SIZE_ATTR,
       PERF_ATTR,
       FLEX_GAP_ATTR
     } = AGNATIVE_KEYS;
@@ -366,6 +376,13 @@
       try {
         if (!window.Lampa || !Lampa.Storage) return 'md';
         return Lampa.Storage.get(CARD_SIZE_KEY, 'md') || 'md';
+      } catch (e) { return 'md'; }
+    }
+
+    function getLogoSize() {
+      try {
+        if (!window.Lampa || !Lampa.Storage) return 'md';
+        return Lampa.Storage.get(LOGO_SIZE_KEY, 'md') || 'md';
       } catch (e) { return 'md'; }
     }
 
@@ -475,6 +492,7 @@
           document.body.removeAttribute(FONT_SIZE_ATTR);
           document.body.removeAttribute(CATEGORY_SIZE_ATTR);
           document.body.removeAttribute(CARD_SIZE_ATTR);
+          document.body.removeAttribute(LOGO_SIZE_ATTR);
           document.body.removeAttribute(BACKDROP_ATTR);
           document.body.removeAttribute(BADGE_ATTR);
           document.body.removeAttribute(RATING_ATTR);
@@ -610,6 +628,11 @@
       document.body.setAttribute(CARD_SIZE_ATTR, getCardSize());
     }
 
+    function syncLogoSize() {
+      if (!document.body) return;
+      document.body.setAttribute(LOGO_SIZE_ATTR, getLogoSize());
+    }
+
     function syncCardFlags() {
       if (!document.body) return;
       document.body.setAttribute(BACKDROP_ATTR, backdropEnabled() ? 'on' : 'off');
@@ -676,10 +699,12 @@
         Lampa.Storage.set(CLOCK_SECONDS_KEY, 'off');
         Lampa.Storage.set(CONTROL_PANEL_KEY, 'off');
         Lampa.Storage.set(PERF_MODE_KEY, 'auto');
+        Lampa.Storage.set(LOGO_SIZE_KEY, 'md');
         Lampa.Storage.set(TOPNAV_ITEMS_KEY, ['main', 'movie', 'tv', 'cartoon']);
         logoCache = {};
         syncGlareClass();
         syncFontSize();
+        syncLogoSize();
         syncCardFlags();
         syncPerfMode();
         resetCardSwitches();
@@ -917,6 +942,29 @@
           },
           onChange: function () {
             syncCardSize();
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
+            name: LOGO_SIZE_KEY,
+            type: 'select',
+            values: {
+              xs: t('val_size_xs'),
+              sm: t('val_size_sm'),
+              md: t('val_size_md'),
+              lg: t('val_size_lg'),
+              xl: t('val_size_xl')
+            },
+            default: 'md'
+          },
+          field: {
+            name: t('set_logo_size_name'),
+            description: t('set_logo_size_desc')
+          },
+          onChange: function () {
+            syncLogoSize();
           }
         });
 
@@ -1750,6 +1798,10 @@
         'body.' + BODY_CLASS + '[' + BADGE_ATTR + '="off"][' + BACKDROP_ATTR + '="off"] .nfx-card-logo { display:none !important; }',
         'body.' + BODY_CLASS + '[' + RATING_ATTR + '="off"][' + BACKDROP_ATTR + '="off"] .nfx-card-rating { display:none !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay__logo { max-height:2.2em !important; max-width:78% !important; margin-bottom:.24em !important; }',
+        'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="xs"] .nfx-card-overlay__logo { max-width:50% !important; max-height:1.7em !important; }',
+        'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="sm"] .nfx-card-overlay__logo { max-width:64% !important; max-height:1.95em !important; }',
+        'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="lg"] .nfx-card-overlay__logo { max-width:90% !important; max-height:2.6em !important; }',
+        'body.' + BODY_CLASS + '[' + LOGO_SIZE_ATTR + '="xl"] .nfx-card-overlay__logo { max-width:100% !important; max-height:3.1em !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay__title { font-size: calc(.95em * var(--agnative-scale, 1)) !important; font-weight:800 !important; line-height:1.16 !important; white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay__meta { font-size: calc(.68em * var(--agnative-scale, 1)) !important; margin-top:.18em !important; opacity:.85 !important; white-space:normal !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .card__title { display:none !important; }',
@@ -2936,6 +2988,7 @@
       syncGlareClass();
       syncFontSize();
       syncCardSize();
+      syncLogoSize();
       syncCardFlags();
       syncPerfMode();
       syncFlexGapFlag();

@@ -34,6 +34,8 @@ export const uk = {
   set_category_size_desc: 'Заголовки поличок (Популярне, Новинки тощо)',
   set_card_size_name: 'Розмір карточок',
   set_card_size_desc: 'Ширина карточок у стрічках',
+  set_logo_size_name: 'Розмір логотипу фільму',
+  set_logo_size_desc: 'Максимальна ширина логотипу на картці відносно картки медіаконтенту',
   set_clock_seconds_name: 'Секунди в годиннику',
   set_clock_seconds_desc: 'Показувати секунди поруч із годинником у шапці',
   set_control_panel_name: 'Панель за кліком на годинник',

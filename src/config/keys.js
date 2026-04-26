@@ -28,6 +28,8 @@ export const AGNATIVE_KEYS = {
   RATING_STYLE_ATTR: 'data-agnative-rating-style',
   CATEGORY_SIZE_ATTR: 'data-agnative-category',
   CARD_SIZE_ATTR: 'data-agnative-card-size',
+  LOGO_SIZE_KEY: 'appletv_agnative_logo_size',
+  LOGO_SIZE_ATTR: 'data-agnative-logo-size',
   PERF_ATTR: 'data-agnative-perf',
   FLEX_GAP_ATTR: 'data-agnative-flex-gap'
 };
