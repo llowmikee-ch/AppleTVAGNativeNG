@@ -48,5 +48,7 @@ export const en = {
   val_perf_auto: 'Auto',
   val_perf_high: 'Maximum (all effects)',
   val_perf_low: 'Weak device',
-  val_perf_ultra: 'Very weak device'
+  val_perf_ultra: 'Very weak device',
+  set_poster_quality_name: 'Poster quality',
+  set_poster_quality_desc: 'Resolution of poster images from TMDB'
 };

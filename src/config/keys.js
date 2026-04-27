@@ -31,6 +31,7 @@ export const AGNATIVE_KEYS = {
   LOGO_SIZE_KEY: 'appletv_agnative_logo_size',
   LOGO_SIZE_ATTR: 'data-agnative-logo-size',
   CACHE_SIZE_KEY: 'appletv_agnative_cache_size',
+  POSTER_QUALITY_KEY: 'appletv_agnative_poster_quality',
   PERF_ATTR: 'data-agnative-perf',
   FLEX_GAP_ATTR: 'data-agnative-flex-gap'
 };

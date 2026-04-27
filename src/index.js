@@ -28,6 +28,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     CARD_SIZE_KEY,
     LOGO_SIZE_KEY,
     CACHE_SIZE_KEY,
+    POSTER_QUALITY_KEY,
     CLOCK_SECONDS_KEY,
     CONTROL_PANEL_KEY,
     PERF_MODE_KEY,
@@ -152,6 +153,15 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       if (v === 'unlimited') return Infinity;
       return (parseInt(v, 10) || 100) * 1024 * 1024;
     } catch (e) { return 100 * 1024 * 1024; }
+  }
+
+  function getPosterQuality() {
+    try {
+      if (!window.Lampa || !Lampa.Storage) return 'w500';
+      var v = Lampa.Storage.get(POSTER_QUALITY_KEY, 'w500') || 'w500';
+      var valid = ['w185', 'w342', 'w500', 'w780', 'original'];
+      return valid.indexOf(v) > -1 ? v : 'w500';
+    } catch (e) { return 'w500'; }
   }
 
   function getRatingStyle() {
@@ -468,6 +478,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       Lampa.Storage.set(CONTROL_PANEL_KEY, 'off');
       Lampa.Storage.set(PERF_MODE_KEY, 'auto');
       Lampa.Storage.set(LOGO_SIZE_KEY, 'md');
+      Lampa.Storage.set(POSTER_QUALITY_KEY, 'w500');
       Lampa.Storage.set(TOPNAV_ITEMS_KEY, ['main', 'movie', 'tv', 'cartoon']);
       logoCache = {};
       posterCache = {};
@@ -736,6 +747,32 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
         },
         onChange: function () {
           syncLogoSize();
+        }
+      });
+
+      Lampa.SettingsApi.addParam({
+        component: SETTINGS_COMPONENT,
+        param: {
+          name: POSTER_QUALITY_KEY,
+          type: 'select',
+          values: {
+            w185: t('val_size_xs'),
+            w342: t('val_size_sm'),
+            w500: t('val_size_md'),
+            w780: t('val_size_lg'),
+            original: t('val_size_xl')
+          },
+          default: 'w500'
+        },
+        field: {
+          name: t('set_poster_quality_name'),
+          description: t('set_poster_quality_desc')
+        },
+        onChange: function () {
+          posterCache = {};
+          clearAll();
+          resetCardSwitches();
+          setTimeout(function () { schedulePatch(); }, 80);
         }
       });
 
@@ -2460,7 +2497,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
         }
         posterCache[cacheKey] = path;
         metaSet(cacheKey, path);
-        if (path) imgPreload(Lampa.TMDB.image('t/p/w500' + path));
+        if (path) imgPreload(Lampa.TMDB.image('t/p/' + getPosterQuality() + path));
         var cbs = posterPending[cacheKey] || [];
         delete posterPending[cacheKey];
         for (var i = 0; i < cbs.length; i++) cbs[i](path);

@@ -48,5 +48,7 @@ export const ru = {
   val_perf_auto: 'Автоматически',
   val_perf_high: 'Максимум (все эффекты)',
   val_perf_low: 'Слабое устройство',
-  val_perf_ultra: 'Очень слабое устройство'
+  val_perf_ultra: 'Очень слабое устройство',
+  set_poster_quality_name: 'Качество постеров',
+  set_poster_quality_desc: 'Разрешение изображений постеров с TMDB'
 };

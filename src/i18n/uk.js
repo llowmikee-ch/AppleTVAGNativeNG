@@ -48,5 +48,7 @@ export const uk = {
   val_perf_auto: 'Автоматично',
   val_perf_high: 'Максимум (всі ефекти)',
   val_perf_low: 'Слабкий пристрій',
-  val_perf_ultra: 'Дуже слабкий пристрій'
+  val_perf_ultra: 'Дуже слабкий пристрій',
+  set_poster_quality_name: 'Якість постерів',
+  set_poster_quality_desc: 'Роздільна здатність зображень постерів з TMDB'
 };
