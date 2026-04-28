@@ -43,14 +43,19 @@
     LOGO_SIZE_KEY: 'appletv_agnative_logo_size',
     LOGO_SIZE_ATTR: 'data-agnative-logo-size',
     CACHE_SIZE_KEY: 'appletv_agnative_cache_size',
+    POSTER_QUALITY_KEY: 'appletv_agnative_poster_quality',
     PERF_ATTR: 'data-agnative-perf',
-    FLEX_GAP_ATTR: 'data-agnative-flex-gap'
+    FLEX_GAP_ATTR: 'data-agnative-flex-gap',
+    OVERLAY_ALIGN_KEY: 'appletv_agnative_overlay_align',
+    OVERLAY_ALIGN_ATTR: 'data-agnative-overlay-align',
+    CARD_IMAGE_MODE_KEY: 'appletv_agnative_card_image_mode',
+    CARD_IMAGE_MODE_ATTR: 'data-agnative-card-image-mode'
   };
 
   const ru = {
     nav_feed: 'Лента',
     badge_movie: 'ФИЛЬМ', badge_tv: 'СЕРИАЛ',
-    set_about_desc: 'Версия 0.3.11  Авторы: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+    set_about_desc: 'Версия 0.3.12  Авторы: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
     set_main_title: 'Основные настройки',
     set_enable_name: 'AppleTV AgNative',
     set_enable_desc: 'Включает и выключает плагин',
@@ -97,13 +102,28 @@
     val_perf_auto: 'Автоматически',
     val_perf_high: 'Максимум (все эффекты)',
     val_perf_low: 'Слабое устройство',
-    val_perf_ultra: 'Очень слабое устройство'
+    val_perf_ultra: 'Очень слабое устройство',
+    set_poster_quality_name: 'Качество постеров',
+    set_poster_quality_desc: 'Разрешение изображений постеров с TMDB',
+    set_overlay_align_name: 'Выравнивание подписи карточки',
+    set_overlay_align_desc: 'Горизонтальное выравнивание названия и метаданных на карточке',
+    val_overlay_align_start: 'По левому краю',
+    val_overlay_align_center: 'По центру',
+    val_overlay_align_end: 'По правому краю',
+    set_section_cards: 'Карточки',
+    set_section_text: 'Текст и шрифты',
+    set_section_clock: 'Часы',
+    set_section_data: 'Данные',
+    set_card_image_mode_name: 'Тип изображения карточки',
+    set_card_image_mode_desc: 'Бекдроп + логотип или постер без логотипа',
+    val_card_image_backdrop: 'Бекдроп + Логотип',
+    val_card_image_poster: 'Постер'
   };
 
   const en = {
     nav_feed: 'Feed',
     badge_movie: 'MOVIE', badge_tv: 'TV SHOW',
-    set_about_desc: 'Version 0.3.11  Authors: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+    set_about_desc: 'Version 0.3.12  Authors: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
     set_main_title: 'Main settings',
     set_enable_name: 'AppleTV AgNative',
     set_enable_desc: 'Enables and disables the plugin',
@@ -150,13 +170,28 @@
     val_perf_auto: 'Auto',
     val_perf_high: 'Maximum (all effects)',
     val_perf_low: 'Weak device',
-    val_perf_ultra: 'Very weak device'
+    val_perf_ultra: 'Very weak device',
+    set_poster_quality_name: 'Poster quality',
+    set_poster_quality_desc: 'Resolution of poster images from TMDB',
+    set_overlay_align_name: 'Card overlay alignment',
+    set_overlay_align_desc: 'Horizontal alignment of title and metadata on the card',
+    val_overlay_align_start: 'Left',
+    val_overlay_align_center: 'Center',
+    val_overlay_align_end: 'Right',
+    set_section_cards: 'Cards',
+    set_section_text: 'Text & Fonts',
+    set_section_clock: 'Clock',
+    set_section_data: 'Data',
+    set_card_image_mode_name: 'Card image type',
+    set_card_image_mode_desc: 'Backdrop + logo or poster without logo',
+    val_card_image_backdrop: 'Backdrop + Logo',
+    val_card_image_poster: 'Poster'
   };
 
   const uk = {
     nav_feed: 'Стрічка',
     badge_movie: 'ФІЛЬМ', badge_tv: 'СЕРІАЛ',
-    set_about_desc: 'Версія 0.3.11  Автори: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+    set_about_desc: 'Версія 0.3.12  Автори: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
     set_main_title: 'Основні налаштування',
     set_enable_name: 'AppleTV AgNative',
     set_enable_desc: 'Вмикає та вимикає плагін',
@@ -203,7 +238,22 @@
     val_perf_auto: 'Автоматично',
     val_perf_high: 'Максимум (всі ефекти)',
     val_perf_low: 'Слабкий пристрій',
-    val_perf_ultra: 'Дуже слабкий пристрій'
+    val_perf_ultra: 'Дуже слабкий пристрій',
+    set_poster_quality_name: 'Якість постерів',
+    set_poster_quality_desc: 'Роздільна здатність зображень постерів з TMDB',
+    set_overlay_align_name: 'Вирівнювання підпису картки',
+    set_overlay_align_desc: 'Горизонтальне вирівнювання назви та метаданих на картці',
+    val_overlay_align_start: 'Ліворуч',
+    val_overlay_align_center: 'По центру',
+    val_overlay_align_end: 'Праворуч',
+    set_section_cards: 'Картки',
+    set_section_text: 'Текст і шрифти',
+    set_section_clock: 'Годинник',
+    set_section_data: 'Дані',
+    set_card_image_mode_name: 'Тип зображення картки',
+    set_card_image_mode_desc: 'Бекдроп + логотип або постер без логотипу',
+    val_card_image_backdrop: 'Бекдроп + Логотип',
+    val_card_image_poster: 'Постер'
   };
 
   const GENRE_MAP_LOCALIZED = {
@@ -473,6 +523,7 @@
       CARD_SIZE_KEY,
       LOGO_SIZE_KEY,
       CACHE_SIZE_KEY,
+      POSTER_QUALITY_KEY,
       CLOCK_SECONDS_KEY,
       CONTROL_PANEL_KEY,
       PERF_MODE_KEY,
@@ -488,7 +539,11 @@
       CARD_SIZE_ATTR,
       LOGO_SIZE_ATTR,
       PERF_ATTR,
-      FLEX_GAP_ATTR
+      FLEX_GAP_ATTR,
+      OVERLAY_ALIGN_KEY,
+      OVERLAY_ALIGN_ATTR,
+      CARD_IMAGE_MODE_KEY,
+      CARD_IMAGE_MODE_ATTR
     } = AGNATIVE_KEYS;
 
     var scheduled = false;
@@ -497,6 +552,8 @@
     var logoPending = {};
     var posterCache = {};
     var posterPending = {};
+    var titledBackdropCache = {};
+    var titledBackdropPending = {};
     var storageListenerBound = false;
     var activityListenerBound = false;
     var fullListenerBound = false;
@@ -597,6 +654,31 @@
         if (v === 'unlimited') return Infinity;
         return (parseInt(v, 10) || 100) * 1024 * 1024;
       } catch (e) { return 100 * 1024 * 1024; }
+    }
+
+    function getPosterQuality() {
+      try {
+        if (!window.Lampa || !Lampa.Storage) return 'w500';
+        var v = Lampa.Storage.get(POSTER_QUALITY_KEY, 'w500') || 'w500';
+        var valid = ['w185', 'w342', 'w500', 'w780', 'original'];
+        return valid.indexOf(v) > -1 ? v : 'w500';
+      } catch (e) { return 'w500'; }
+    }
+
+    function getCardImageMode() {
+      try {
+        if (!window.Lampa || !Lampa.Storage) return 'backdrop';
+        var v = Lampa.Storage.get(CARD_IMAGE_MODE_KEY, 'backdrop') || 'backdrop';
+        return v === 'poster' ? 'poster' : 'backdrop';
+      } catch (e) { return 'backdrop'; }
+    }
+
+    function getBackdropQuality() {
+      var q = getPosterQuality();
+      if (q === 'w185' || q === 'w342') return 'w300';
+      if (q === 'w500') return 'w780';
+      if (q === 'w780') return 'w1280';
+      return 'original';
     }
 
     function getRatingStyle() {
@@ -711,6 +793,7 @@
           document.body.removeAttribute(RATING_ATTR);
           document.body.removeAttribute(PERF_ATTR);
           document.body.removeAttribute(FLEX_GAP_ATTR);
+          document.body.removeAttribute(CARD_IMAGE_MODE_ATTR);
         }
         var style = document.getElementById(STYLE_ID);
         if (style) style.remove();
@@ -852,6 +935,7 @@
       document.body.setAttribute(BADGE_ATTR, badgeEnabled() ? 'on' : 'off');
       document.body.setAttribute(RATING_ATTR, ratingEnabled() ? 'on' : 'off');
       document.body.setAttribute(RATING_STYLE_ATTR, getRatingStyle());
+      document.body.setAttribute(CARD_IMAGE_MODE_ATTR, getCardImageMode());
     }
 
     function syncPerfMode() {
@@ -864,6 +948,19 @@
     function syncFlexGapFlag() {
       if (!document.body) return;
       document.body.setAttribute(FLEX_GAP_ATTR, detectFlexGapSupport() ? 'yes' : 'no');
+    }
+
+    function getOverlayAlign() {
+      try {
+        if (!window.Lampa || !Lampa.Storage) return 'start';
+        var v = Lampa.Storage.get(OVERLAY_ALIGN_KEY, 'start') || 'start';
+        return (v === 'center' || v === 'end') ? v : 'start';
+      } catch (e) { return 'start'; }
+    }
+
+    function syncOverlayAlign() {
+      if (!document.body) return;
+      document.body.setAttribute(OVERLAY_ALIGN_ATTR, getOverlayAlign());
     }
 
     function restoreOriginalImg(cardEl) {
@@ -913,8 +1010,12 @@
         Lampa.Storage.set(CONTROL_PANEL_KEY, 'off');
         Lampa.Storage.set(PERF_MODE_KEY, 'auto');
         Lampa.Storage.set(LOGO_SIZE_KEY, 'md');
+        Lampa.Storage.set(POSTER_QUALITY_KEY, 'w500');
+        Lampa.Storage.set(OVERLAY_ALIGN_KEY, 'start');
+        Lampa.Storage.set(CARD_IMAGE_MODE_KEY, 'backdrop');
         Lampa.Storage.set(TOPNAV_ITEMS_KEY, ['main', 'movie', 'tv', 'cartoon']);
         logoCache = {};
+        titledBackdropCache = {};
         posterCache = {};
         clearAll();
         syncGlareClass();
@@ -922,6 +1023,7 @@
         syncLogoSize();
         syncCardFlags();
         syncPerfMode();
+        syncOverlayAlign();
         resetCardSwitches();
         setTimeout(function () { schedulePatch(); }, 80);
         try {
@@ -1049,6 +1151,23 @@
         Lampa.SettingsApi.addParam({
           component: SETTINGS_COMPONENT,
           param: {
+            name: GLARE_KEY,
+            type: 'select',
+            values: { on: langText('extensions_enable', t('val_on')), off: langText('extensions_disable', t('val_off')) },
+            default: 'on'
+          },
+          field: {
+            name: t('set_glare_name'),
+            description: t('set_glare_desc')
+          },
+          onChange: function () {
+            syncGlareClass();
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
             name: UI_LANG_KEY,
             type: 'select',
             values: {
@@ -1070,71 +1189,38 @@
 
         Lampa.SettingsApi.addParam({
           component: SETTINGS_COMPONENT,
-          param: {
-            name: LOGO_LANG_KEY,
-            type: 'select',
-            values: {
-              auto: t('val_auto'),
-              ru: langText('filter_lang_ru', t('val_ru')),
-              en: langText('filter_lang_en', t('val_en')),
-              uk: langText('filter_lang_uk', t('val_uk'))
-            },
-            default: 'auto'
-          },
+          param: { name: 'agnative_open_topnav_settings', type: 'button' },
           field: {
-            name: t('set_logo_lang_name'),
-            description: t('set_logo_lang_desc')
+            name: t('set_topnav_name'),
+            description: t('set_topnav_desc')
           },
           onChange: function () {
-            logoCache = {};
-            clearAll();
+            openTopnavSettingsSection();
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: { type: 'title' },
+          field: { name: t('set_section_cards') }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
+            name: BACKDROP_KEY,
+            type: 'select',
+            values: { on: langText('extensions_enable', t('val_on')), off: langText('extensions_disable', t('val_off')) },
+            default: 'on'
+          },
+          field: {
+            name: t('set_backdrop_name'),
+            description: t('set_backdrop_desc')
+          },
+          onChange: function () {
+            syncCardFlags();
+            resetCardSwitches();
             setTimeout(function () { schedulePatch(); }, 80);
-          }
-        });
-
-        Lampa.SettingsApi.addParam({
-          component: SETTINGS_COMPONENT,
-          param: {
-            name: FONT_SIZE_KEY,
-            type: 'select',
-            values: {
-              xs: t('val_size_xs'),
-              sm: t('val_size_sm'),
-              md: t('val_size_md'),
-              lg: t('val_size_lg'),
-              xl: t('val_size_xl')
-            },
-            default: 'md'
-          },
-          field: {
-            name: t('set_font_size_name'),
-            description: t('set_font_size_desc')
-          },
-          onChange: function () {
-            syncFontSize();
-          }
-        });
-
-        Lampa.SettingsApi.addParam({
-          component: SETTINGS_COMPONENT,
-          param: {
-            name: CATEGORY_SIZE_KEY,
-            type: 'select',
-            values: {
-              xs: t('val_size_xs'),
-              sm: t('val_size_sm'),
-              md: t('val_size_md'),
-              lg: t('val_size_lg'),
-              xl: t('val_size_xl')
-            },
-            default: 'md'
-          },
-          field: {
-            name: t('set_category_size_name'),
-            description: t('set_category_size_desc')
-          },
-          onChange: function () {
-            syncFontSize();
           }
         });
 
@@ -1164,6 +1250,83 @@
         Lampa.SettingsApi.addParam({
           component: SETTINGS_COMPONENT,
           param: {
+            name: CARD_IMAGE_MODE_KEY,
+            type: 'select',
+            values: {
+              backdrop: t('val_card_image_backdrop'),
+              poster: t('val_card_image_poster')
+            },
+            default: 'backdrop'
+          },
+          field: {
+            name: t('set_card_image_mode_name'),
+            description: t('set_card_image_mode_desc')
+          },
+          onChange: function () {
+            posterCache = {};
+            logoCache = {};
+            titledBackdropCache = {};
+            clearAll();
+            syncCardFlags();
+            resetCardSwitches();
+            setTimeout(function () { schedulePatch(); }, 80);
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
+            name: POSTER_QUALITY_KEY,
+            type: 'select',
+            values: {
+              w185: t('val_size_xs'),
+              w342: t('val_size_sm'),
+              w500: t('val_size_md'),
+              w780: t('val_size_lg'),
+              original: t('val_size_xl')
+            },
+            default: 'w500'
+          },
+          field: {
+            name: t('set_poster_quality_name'),
+            description: t('set_poster_quality_desc')
+          },
+          onChange: function () {
+            posterCache = {};
+            clearAll();
+            resetCardSwitches();
+            setTimeout(function () { schedulePatch(); }, 80);
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
+            name: LOGO_LANG_KEY,
+            type: 'select',
+            values: {
+              auto: t('val_auto'),
+              ru: langText('filter_lang_ru', t('val_ru')),
+              en: langText('filter_lang_en', t('val_en')),
+              uk: langText('filter_lang_uk', t('val_uk'))
+            },
+            default: 'auto'
+          },
+          field: {
+            name: t('set_logo_lang_name'),
+            description: t('set_logo_lang_desc')
+          },
+          onChange: function () {
+            logoCache = {};
+            titledBackdropCache = {};
+            clearAll();
+            setTimeout(function () { schedulePatch(); }, 80);
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
             name: LOGO_SIZE_KEY,
             type: 'select',
             values: {
@@ -1187,42 +1350,21 @@
         Lampa.SettingsApi.addParam({
           component: SETTINGS_COMPONENT,
           param: {
-            name: CACHE_SIZE_KEY,
+            name: OVERLAY_ALIGN_KEY,
             type: 'select',
             values: {
-              '50': '50 MB',
-              '100': '100 MB',
-              '200': '200 MB',
-              '500': '500 MB',
-              'unlimited': t('val_unlimited')
+              start: t('val_overlay_align_start'),
+              center: t('val_overlay_align_center'),
+              end: t('val_overlay_align_end')
             },
-            default: '100'
+            default: 'start'
           },
           field: {
-            name: t('set_cache_size_name'),
-            description: t('set_cache_size_desc')
+            name: t('set_overlay_align_name'),
+            description: t('set_overlay_align_desc')
           },
           onChange: function () {
-            prune(getCacheMaxBytes());
-          }
-        });
-
-        Lampa.SettingsApi.addParam({
-          component: SETTINGS_COMPONENT,
-          param: {
-            name: BACKDROP_KEY,
-            type: 'select',
-            values: { on: langText('extensions_enable', t('val_on')), off: langText('extensions_disable', t('val_off')) },
-            default: 'on'
-          },
-          field: {
-            name: t('set_backdrop_name'),
-            description: t('set_backdrop_desc')
-          },
-          onChange: function () {
-            syncCardFlags();
-            resetCardSwitches();
-            setTimeout(function () { schedulePatch(); }, 80);
+            syncOverlayAlign();
           }
         });
 
@@ -1287,19 +1429,60 @@
 
         Lampa.SettingsApi.addParam({
           component: SETTINGS_COMPONENT,
+          param: { type: 'title' },
+          field: { name: t('set_section_text') }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
           param: {
-            name: GLARE_KEY,
+            name: FONT_SIZE_KEY,
             type: 'select',
-            values: { on: langText('extensions_enable', t('val_on')), off: langText('extensions_disable', t('val_off')) },
-            default: 'on'
+            values: {
+              xs: t('val_size_xs'),
+              sm: t('val_size_sm'),
+              md: t('val_size_md'),
+              lg: t('val_size_lg'),
+              xl: t('val_size_xl')
+            },
+            default: 'md'
           },
           field: {
-            name: t('set_glare_name'),
-            description: t('set_glare_desc')
+            name: t('set_font_size_name'),
+            description: t('set_font_size_desc')
           },
           onChange: function () {
-            syncGlareClass();
+            syncFontSize();
           }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
+            name: CATEGORY_SIZE_KEY,
+            type: 'select',
+            values: {
+              xs: t('val_size_xs'),
+              sm: t('val_size_sm'),
+              md: t('val_size_md'),
+              lg: t('val_size_lg'),
+              xl: t('val_size_xl')
+            },
+            default: 'md'
+          },
+          field: {
+            name: t('set_category_size_name'),
+            description: t('set_category_size_desc')
+          },
+          onChange: function () {
+            syncFontSize();
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: { type: 'title' },
+          field: { name: t('set_section_clock') }
         });
 
         Lampa.SettingsApi.addParam({
@@ -1339,13 +1522,30 @@
 
         Lampa.SettingsApi.addParam({
           component: SETTINGS_COMPONENT,
-          param: { name: 'agnative_open_topnav_settings', type: 'button' },
+          param: { type: 'title' },
+          field: { name: t('set_section_data') }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
+            name: CACHE_SIZE_KEY,
+            type: 'select',
+            values: {
+              '50': '50 MB',
+              '100': '100 MB',
+              '200': '200 MB',
+              '500': '500 MB',
+              'unlimited': t('val_unlimited')
+            },
+            default: '100'
+          },
           field: {
-            name: t('set_topnav_name'),
-            description: t('set_topnav_desc')
+            name: t('set_cache_size_name'),
+            description: t('set_cache_size_desc')
           },
           onChange: function () {
-            openTopnavSettingsSection();
+            prune(getCacheMaxBytes());
           }
         });
 
@@ -1458,6 +1658,7 @@
 
           if (e.name === LOGO_LANG_KEY) {
             logoCache = {};
+            titledBackdropCache = {};
             clearAll();
             setTimeout(function () { schedulePatch(); }, 80);
             return;
@@ -1755,6 +1956,11 @@
         '  display: none !important;',
         '  content: none !important;',
         '}',
+
+        'body.' + BODY_CLASS + '[' + PERF_ATTR + '="low"] .settings-param[data-name="' + GLARE_KEY + '"],',
+        'body.' + BODY_CLASS + '[' + PERF_ATTR + '="ultra"] .settings-param[data-name="' + GLARE_KEY + '"] { display: none !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_ATTR + '="off"] .settings-param[data-name="' + RATING_STYLE_KEY + '"] { display: none !important; }',
+        'body.' + BODY_CLASS + '[' + CARD_IMAGE_MODE_ATTR + '="poster"] .settings-param[data-name="' + LOGO_SIZE_KEY + '"] { display: none !important; }',
         'body.' + BODY_CLASS + ' .wrap__content.layer--height.layer--width::after,',
         'body.' + BODY_CLASS + ' .wrap__content.layer--height.layer--width > *::before,',
         'body.' + BODY_CLASS + ' .wrap__content.layer--height.layer--width > *::after,',
@@ -2001,7 +2207,16 @@
         'body.' + GLARE_CLASS + ' .card.focus .card__view, body.' + GLARE_CLASS + ' .card.hover .card__view, body.' + GLARE_CLASS + ' .card-episode.focus .full-episode, body.' + GLARE_CLASS + ' .card-episode.hover .full-episode, body.' + GLARE_CLASS + ' .full-start-new__poster.focus, body.' + GLARE_CLASS + ' .full-start-new__poster.hover { transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1.055) translateY(-.06em) !important; transition: transform .08s linear, box-shadow .24s ease, filter .24s ease !important; }',
         'body.' + BODY_CLASS + ' .card__vote, body.' + BODY_CLASS + ' .card__quality, body.' + BODY_CLASS + ' .card__type, body.' + BODY_CLASS + ' .card__promo-text, body.' + BODY_CLASS + ' .card__promo-title, body.' + BODY_CLASS + ' .full-person__photo, body.' + BODY_CLASS + ' .nfx-card-overlay__match { display:none !important; }',
         'body.' + BODY_CLASS + ' .card__title, body.' + BODY_CLASS + ' .card__age { display:none !important; }',
-        'body.' + BODY_CLASS + ' .nfx-card-overlay { position:absolute; left:0; right:0; bottom:0; z-index:0; display:block !important; opacity:1 !important; visibility:visible !important; border-radius:0 0 1.35em 1.35em !important; background:linear-gradient(0deg, rgba(6,8,14,.88) 0%, rgba(6,8,14,.56) 38%, rgba(6,8,14,.16) 68%, rgba(6,8,14,0) 100%) !important; padding:2.15em 1.02em .92em !important; transform: translateZ(14px); transition: transform .28s cubic-bezier(.22,.61,.36,1), opacity .24s ease; pointer-events:none; }',
+        'body.' + BODY_CLASS + ' .nfx-card-overlay { position:absolute; left:0; right:0; bottom:0; z-index:0; display:flex !important; flex-direction:column; justify-content:center; align-items:flex-start; opacity:1 !important; visibility:visible !important; border-radius:0 0 1.35em 1.35em !important; background:linear-gradient(0deg, rgba(6,8,14,.88) 0%, rgba(6,8,14,.56) 38%, rgba(6,8,14,.16) 68%, rgba(6,8,14,0) 100%) !important; padding:2.15em 1.02em .92em !important; transform: translateZ(14px); transition: transform .28s cubic-bezier(.22,.61,.36,1), opacity .24s ease; pointer-events:none; }',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="start"] .nfx-card-overlay { align-items:flex-start !important; }',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="start"] .nfx-card-overlay__title,',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="start"] .nfx-card-overlay__meta { text-align:left !important; }',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="center"] .nfx-card-overlay { align-items:center !important; }',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="center"] .nfx-card-overlay__title,',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="center"] .nfx-card-overlay__meta { text-align:center !important; }',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="end"] .nfx-card-overlay { align-items:flex-end !important; }',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="end"] .nfx-card-overlay__title,',
+        'body.' + BODY_CLASS + '[' + OVERLAY_ALIGN_ATTR + '="end"] .nfx-card-overlay__meta { text-align:right !important; }',
         'body.' + BODY_CLASS + ' .card.focus .nfx-card-overlay { transform: translateZ(18px) translateY(-.02em); }',
         'body.' + BODY_CLASS + ' .nfx-card-overlay__logo, body.' + BODY_CLASS + ' img.nfx-card-overlay__logo { display:block !important; opacity:1 !important; visibility:visible !important; max-height:2.55em !important; max-width:82% !important; margin-bottom:.28em !important; border-radius:0 !important; clip-path:none !important; -webkit-clip-path:none !important; mask-image:none !important; -webkit-mask-image:none !important; overflow:visible !important; }',
         'body.' + BODY_CLASS + ' .nfx-card-overlay__title { color:#fff; font-size:1.02em !important; line-height:1.14 !important; font-weight:800 !important; text-shadow:0 2px 12px rgba(0,0,0,.5); white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; }',
@@ -2025,14 +2240,23 @@
         'body.' + BODY_CLASS + ' .nfx-card-overlay__title { font-size: calc(1em * var(--agnative-scale, 1)) !important; }',
         'body.' + BODY_CLASS + ' .nfx-card-overlay__meta { font-size: calc(.72em * var(--agnative-scale, 1)) !important; }',
         'body.' + BODY_CLASS + ' .nfx-card-logo { font-size: calc(.72em * var(--agnative-scale, 1)) !important; }',
-        'body.' + BODY_CLASS + ' .nfx-card-rating { position:absolute; top:.7em; right:.82em; z-index:4; display:inline-flex; align-items:center; justify-content:center; padding:.32em .66em; border-radius:.85em; background:rgba(12,14,20,.68); border:1px solid rgba(255,255,255,.14); color:#ffd13d; font-size: calc(.72em * var(--agnative-scale, 1)); font-weight:800; letter-spacing:.02em; backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); pointer-events:none; box-shadow: 0 4px 10px rgba(0,0,0,.24); }',
-        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating { color:#ffd13d !important; background:rgba(12,14,20,.68) !important; border-color:rgba(255,255,255,.14) !important; }',
+        'body.' + BODY_CLASS + ' .nfx-card-rating { position:absolute; top:.7em; right:.82em; z-index:4; display:inline-flex; align-items:center; justify-content:center; padding:.32em .66em; border-radius:.85em; background:rgba(12,14,20,.68); border:1px solid rgba(255,255,255,.14); color:rgba(255,255,255,.96); font-size: calc(.72em * var(--agnative-scale, 1)); font-weight:800; letter-spacing:.02em; backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); pointer-events:none; box-shadow: 0 4px 10px rgba(0,0,0,.24); }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="1"]  { color:#ff4444 !important; border-color:rgba(255,68,68,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="2"]  { color:#ff6633 !important; border-color:rgba(255,102,51,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="3"]  { color:#ff8800 !important; border-color:rgba(255,136,0,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="4"]  { color:#ffaa00 !important; border-color:rgba(255,170,0,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="5"]  { color:#ffcc00 !important; border-color:rgba(255,204,0,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="6"]  { color:#ddee00 !important; border-color:rgba(221,238,0,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="7"]  { color:#aadd00 !important; border-color:rgba(170,221,0,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="8"]  { color:#66cc33 !important; border-color:rgba(102,204,51,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="9"]  { color:#33bb33 !important; border-color:rgba(51,187,51,.35) !important; }',
+        'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="color"] .nfx-card-rating[data-score="10"] { color:#00bb44 !important; border-color:rgba(0,187,68,.35) !important; }',
         'body.' + BODY_CLASS + '[' + RATING_STYLE_ATTR + '="mono"] .nfx-card-rating { color:rgba(255,255,255,.96) !important; background:rgba(255,255,255,.12) !important; border-color:rgba(255,255,255,.18) !important; }',
         'body.' + BODY_CLASS + '[' + BADGE_ATTR + '="off"] .nfx-card-logo { display:none !important; }',
         'body.' + BODY_CLASS + '[' + RATING_ATTR + '="off"] .nfx-card-rating { display:none !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .card .card__view { padding-bottom:140% !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .card__img, body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .card__image { object-position:center center !important; }',
-        'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay { display:block !important; background:linear-gradient(0deg, rgba(4,5,10,1) 0%, rgba(4,5,10,.98) 18%, rgba(4,5,10,.88) 36%, rgba(4,5,10,.6) 58%, rgba(4,5,10,.2) 78%, rgba(4,5,10,0) 100%) !important; padding:5em 1em 1em !important; border-radius:0 0 1.35em 1.35em !important; }',
+        'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-overlay { display:flex !important; background:linear-gradient(0deg, rgba(4,5,10,1) 0%, rgba(4,5,10,.98) 18%, rgba(4,5,10,.88) 36%, rgba(4,5,10,.6) 58%, rgba(4,5,10,.2) 78%, rgba(4,5,10,0) 100%) !important; padding:5em 1em 1em !important; border-radius:0 0 1.35em 1.35em !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-rating { display:inline-flex !important; }',
         'body.' + BODY_CLASS + '[' + BACKDROP_ATTR + '="off"] .nfx-card-logo { display:inline-flex !important; }',
         'body.' + BODY_CLASS + '[' + BADGE_ATTR + '="off"][' + BACKDROP_ATTR + '="off"] .nfx-card-logo { display:none !important; }',
@@ -2877,6 +3101,60 @@
       return Lampa.TMDB.image('t/p/w300' + logoPath);
     }
 
+    function fetchTitledBackdrop(id, type, callback) {
+      if (!id) return callback(null);
+      var lang = getLogoLang();
+      var cacheKey = 'titled_backdrop/' + type + '/' + id + '/' + lang;
+
+      if (cacheKey in titledBackdropCache) return callback(titledBackdropCache[cacheKey]);
+
+      if (titledBackdropPending[cacheKey]) {
+        titledBackdropPending[cacheKey].push(callback);
+        return;
+      }
+      titledBackdropPending[cacheKey] = [callback];
+
+      metaGet(cacheKey, function (persisted) {
+        if (persisted !== undefined) {
+          titledBackdropCache[cacheKey] = persisted;
+          var cbs = titledBackdropPending[cacheKey] || [];
+          delete titledBackdropPending[cacheKey];
+          for (var i = 0; i < cbs.length; i++) cbs[i](persisted);
+          return;
+        }
+
+        var langs = [lang];
+        if (lang !== 'en') langs.push('en');
+
+        var url = 'https://api.themoviedb.org/3/' + type + '/' + id +
+          '/images?api_key=' + TMDB_KEY + '&include_image_language=' + langs.join(',');
+
+        fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+          var path = null;
+          if (data.backdrops && data.backdrops.length) {
+            var preferred = data.backdrops.filter(function (b) { return b.iso_639_1 === lang; });
+            var english = data.backdrops.filter(function (b) { return b.iso_639_1 === 'en'; });
+            var candidates = preferred.length ? preferred : english;
+            if (candidates.length) {
+              candidates.sort(function (a, b) { return (b.vote_average || 0) - (a.vote_average || 0); });
+              path = candidates[0].file_path;
+            }
+          }
+          titledBackdropCache[cacheKey] = path;
+          metaSet(cacheKey, path);
+          if (path) imgPreload(Lampa.TMDB.image('t/p/' + getBackdropQuality() + path));
+          var cbs = titledBackdropPending[cacheKey] || [];
+          delete titledBackdropPending[cacheKey];
+          for (var i = 0; i < cbs.length; i++) cbs[i](path);
+        }).catch(function () {
+          titledBackdropCache[cacheKey] = null;
+          var cbs = titledBackdropPending[cacheKey] || [];
+          delete titledBackdropPending[cacheKey];
+          for (var i = 0; i < cbs.length; i++) cbs[i](null);
+        });
+      });
+    }
+
     function fetchCleanPoster(id, type, callback) {
       var cacheKey = 'poster/' + type + '/' + id;
       if (cacheKey in posterCache) return callback(posterCache[cacheKey]);
@@ -2905,7 +3183,7 @@
           }
           posterCache[cacheKey] = path;
           metaSet(cacheKey, path);
-          if (path) imgPreload(Lampa.TMDB.image('t/p/w500' + path));
+          if (path) imgPreload(Lampa.TMDB.image('t/p/' + getPosterQuality() + path));
           var cbs = posterPending[cacheKey] || [];
           delete posterPending[cacheKey];
           for (var i = 0; i < cbs.length; i++) cbs[i](path);
@@ -2927,10 +3205,34 @@
 
       var perfLevel = resolvePerfLevel();
       var isUltra = perfLevel === 'ultra';
-      var useBackdrop = backdropEnabled();
+      var cardImageMode = getCardImageMode();
 
       var imgEl = cardEl.querySelector('.card__img');
-      if (imgEl && data.backdrop_path && useBackdrop) {
+      var useHorizontal = backdropEnabled();
+
+      function setImgUrl(url) {
+        if (!imgEl) return;
+        if (imgEl.tagName === 'IMG') {
+          imgLoad(url, function (src) {
+            imgEl.onload = function () { if (src !== url) URL.revokeObjectURL(src); };
+            imgEl.onerror = function () { if (src !== url) URL.revokeObjectURL(src); };
+            imgEl.src = src;
+            imgEl.style.objectFit = 'cover';
+            imgEl.style.objectPosition = 'center';
+          });
+        } else {
+          imgLoad(url, function (src) {
+            var prev = imgEl.getAttribute('data-nfx-blob');
+            if (prev) URL.revokeObjectURL(prev);
+            if (src !== url) imgEl.setAttribute('data-nfx-blob', src);
+            imgEl.style.backgroundImage = 'url(' + src + ')';
+            imgEl.style.backgroundSize = 'cover';
+            imgEl.style.backgroundPosition = 'center';
+          });
+        }
+      }
+
+      if (imgEl && cardImageMode === 'backdrop') {
         if (imgEl.tagName === 'IMG') {
           if (!imgEl.hasAttribute('data-nfx-original-src')) {
             imgEl.setAttribute('data-nfx-original-src', imgEl.getAttribute('src') || '');
@@ -2938,25 +3240,73 @@
         } else if (!imgEl.hasAttribute('data-nfx-original-bg')) {
           imgEl.setAttribute('data-nfx-original-bg', imgEl.style.backgroundImage || '');
         }
-        var backdropUrl = Lampa.TMDB.image('t/p/w500' + data.backdrop_path);
-        if (imgEl.tagName === 'IMG') {
-          imgLoad(backdropUrl, function (src) {
-            imgEl.onload = function () { if (src !== backdropUrl) URL.revokeObjectURL(src); };
-            imgEl.onerror = function () { if (src !== backdropUrl) URL.revokeObjectURL(src); };
-            imgEl.src = src;
-            imgEl.style.objectFit = 'cover';
-            imgEl.style.objectPosition = 'center';
+        if (data.backdrop_path) {
+          setImgUrl(Lampa.TMDB.image('t/p/' + getBackdropQuality() + data.backdrop_path));
+        }
+      }
+
+      if (cardImageMode === 'poster') {
+        if (imgEl) {
+          if (imgEl.tagName === 'IMG') {
+            if (!imgEl.hasAttribute('data-nfx-original-src')) {
+              imgEl.setAttribute('data-nfx-original-src', imgEl.getAttribute('src') || '');
+            }
+          } else if (!imgEl.hasAttribute('data-nfx-original-bg')) {
+            imgEl.setAttribute('data-nfx-original-bg', imgEl.style.backgroundImage || '');
+          }
+        }
+
+        var pTmdbType = data.name ? 'tv' : 'movie';
+        var pView = cardEl.querySelector('.card__view');
+        var pVote = data.vote_average ? parseFloat(data.vote_average) : 0;
+        var pYear = '';
+        if (data.release_date) pYear = data.release_date.substring(0, 4);
+        else if (data.first_air_date) pYear = data.first_air_date.substring(0, 4);
+        var pGenreNames = getGenreNames(data);
+        var pMetaLeft = [];
+        if (pVote > 0) pMetaLeft.push('<span class="nfx-card-overlay__match">' + Math.round(pVote * 10) + '%</span>');
+        if (pYear) pMetaLeft.push('<span>' + pYear + '</span>');
+        var pMetaParts = [];
+        if (pMetaLeft.length) pMetaParts.push(pMetaLeft.join(' '));
+        if (pGenreNames.length) pMetaParts.push('<span>' + escapeHtml(pGenreNames.slice(0, 2).join(', ')) + '</span>');
+        var pMetaHtml = pMetaParts.length ? '<div class="nfx-card-overlay__meta">' + pMetaParts.join('<span style="opacity:0.4"> · </span>') + '</div>' : '';
+
+        function buildPosterOverlay() {
+          if (!pView || pView.querySelector('.nfx-card-overlay')) return;
+          if (pMetaHtml) {
+            var pOverlay = document.createElement('div');
+            pOverlay.className = 'nfx-card-overlay';
+            pOverlay.innerHTML = pMetaHtml;
+            pView.appendChild(pOverlay);
+          }
+          if (badgeEnabled() && (data.title || data.name)) {
+            var pBadge = document.createElement('div');
+            pBadge.className = 'nfx-card-logo';
+            pBadge.textContent = data.name ? t('badge_tv') : t('badge_movie');
+            pView.appendChild(pBadge);
+          }
+          if (ratingEnabled() && pVote > 0) {
+            var pRating = document.createElement('div');
+            pRating.className = 'nfx-card-rating';
+            pRating.setAttribute('data-score', Math.min(10, Math.max(1, Math.round(pVote))));
+            pRating.textContent = pVote.toFixed(1);
+            pView.appendChild(pRating);
+          }
+        }
+
+        if (useHorizontal && data.id && !isUltra) {
+          if (data.poster_path) setImgUrl(Lampa.TMDB.image('t/p/' + getPosterQuality() + data.poster_path));
+          fetchTitledBackdrop(data.id, pTmdbType, function (titledPath) {
+            if (titledPath) {
+              setImgUrl(Lampa.TMDB.image('t/p/' + getBackdropQuality() + titledPath));
+            }
+            buildPosterOverlay();
           });
         } else {
-          imgLoad(backdropUrl, function (src) {
-            var prev = imgEl.getAttribute('data-nfx-blob');
-            if (prev) URL.revokeObjectURL(prev);
-            if (src !== backdropUrl) imgEl.setAttribute('data-nfx-blob', src);
-            imgEl.style.backgroundImage = 'url(' + src + ')';
-            imgEl.style.backgroundSize = 'cover';
-            imgEl.style.backgroundPosition = 'center';
-          });
+          if (data.poster_path) setImgUrl(Lampa.TMDB.image('t/p/' + getPosterQuality() + data.poster_path));
+          buildPosterOverlay();
         }
+        return;
       }
 
       var view = cardEl.querySelector('.card__view');
@@ -2976,10 +3326,12 @@
       var overlay = document.createElement('div');
       overlay.className = 'nfx-card-overlay';
 
-      var metaParts = [];
-      if (vote > 0) metaParts.push('<span class="nfx-card-overlay__match">' + Math.round(vote * 10) + '%</span>');
-      if (year) metaParts.push('<span>' + year + '</span>');
+      var metaLeft = [];
+      if (vote > 0) metaLeft.push('<span class="nfx-card-overlay__match">' + Math.round(vote * 10) + '%</span>');
+      if (year) metaLeft.push('<span>' + year + '</span>');
       var genreNames = getGenreNames(data);
+      var metaParts = [];
+      if (metaLeft.length) metaParts.push(metaLeft.join(' '));
       if (genreNames.length) metaParts.push('<span>' + escapeHtml(genreNames.slice(0, 2).join(', ')) + '</span>');
       var metaHtml = metaParts.length ? '<div class="nfx-card-overlay__meta">' + metaParts.join('<span style="opacity:0.4"> · </span>') + '</div>' : '';
 
@@ -2988,6 +3340,7 @@
       view.appendChild(overlay);
 
       var tmdbType = data.name ? 'tv' : 'movie';
+
       if (!isUltra) {
         fetchLogo(data.id, tmdbType, function (logo) {
           if (!logo) return;
@@ -3018,31 +3371,9 @@
       if (ratingEnabled() && vote > 0) {
         var rating = document.createElement('div');
         rating.className = 'nfx-card-rating';
+        rating.setAttribute('data-score', Math.min(10, Math.max(1, Math.round(vote))));
         rating.textContent = vote.toFixed(1);
         view.appendChild(rating);
-      }
-
-      if (!useBackdrop && data.id && imgEl) {
-        fetchCleanPoster(data.id, tmdbType, function (posterPath) {
-          if (!posterPath) return;
-          var url = Lampa.TMDB.image('t/p/w500' + posterPath);
-          if (imgEl.tagName === 'IMG') {
-            imgLoad(url, function (src) {
-              imgEl.onload = function () { if (src !== url) URL.revokeObjectURL(src); };
-              imgEl.onerror = function () { if (src !== url) URL.revokeObjectURL(src); };
-              imgEl.src = src;
-            });
-          } else {
-            imgLoad(url, function (src) {
-              var prev = imgEl.getAttribute('data-nfx-blob');
-              if (prev) URL.revokeObjectURL(prev);
-              if (src !== url) imgEl.setAttribute('data-nfx-blob', src);
-              imgEl.style.backgroundImage = 'url(' + src + ')';
-              imgEl.style.backgroundSize = 'cover';
-              imgEl.style.backgroundPosition = 'center';
-            });
-          }
-        });
       }
     }
 
@@ -3284,6 +3615,7 @@
       syncCardFlags();
       syncPerfMode();
       syncFlexGapFlag();
+      syncOverlayAlign();
       observeCards();
       initGlareRuntime();
       processCards(document.body);

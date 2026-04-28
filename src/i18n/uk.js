@@ -1,7 +1,7 @@
 export const uk = {
   nav_feed: 'Стрічка',
   badge_movie: 'ФІЛЬМ', badge_tv: 'СЕРІАЛ',
-  set_about_desc: 'Версія 0.3.11  Автори: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+  set_about_desc: 'Версія 0.3.12  Автори: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
   set_main_title: 'Основні налаштування',
   set_enable_name: 'AppleTV AgNative',
   set_enable_desc: 'Вмикає та вимикає плагін',
@@ -48,5 +48,20 @@ export const uk = {
   val_perf_auto: 'Автоматично',
   val_perf_high: 'Максимум (всі ефекти)',
   val_perf_low: 'Слабкий пристрій',
-  val_perf_ultra: 'Дуже слабкий пристрій'
+  val_perf_ultra: 'Дуже слабкий пристрій',
+  set_poster_quality_name: 'Якість постерів',
+  set_poster_quality_desc: 'Роздільна здатність зображень постерів з TMDB',
+  set_overlay_align_name: 'Вирівнювання підпису картки',
+  set_overlay_align_desc: 'Горизонтальне вирівнювання назви та метаданих на картці',
+  val_overlay_align_start: 'Ліворуч',
+  val_overlay_align_center: 'По центру',
+  val_overlay_align_end: 'Праворуч',
+  set_section_cards: 'Картки',
+  set_section_text: 'Текст і шрифти',
+  set_section_clock: 'Годинник',
+  set_section_data: 'Дані',
+  set_card_image_mode_name: 'Тип зображення картки',
+  set_card_image_mode_desc: 'Бекдроп + логотип або постер без логотипу',
+  val_card_image_backdrop: 'Бекдроп + Логотип',
+  val_card_image_poster: 'Постер'
 };

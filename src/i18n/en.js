@@ -1,7 +1,7 @@
 export const en = {
   nav_feed: 'Feed',
   badge_movie: 'MOVIE', badge_tv: 'TV SHOW',
-  set_about_desc: 'Version 0.3.11  Authors: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+  set_about_desc: 'Version 0.3.12  Authors: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
   set_main_title: 'Main settings',
   set_enable_name: 'AppleTV AgNative',
   set_enable_desc: 'Enables and disables the plugin',
@@ -48,5 +48,20 @@ export const en = {
   val_perf_auto: 'Auto',
   val_perf_high: 'Maximum (all effects)',
   val_perf_low: 'Weak device',
-  val_perf_ultra: 'Very weak device'
+  val_perf_ultra: 'Very weak device',
+  set_poster_quality_name: 'Poster quality',
+  set_poster_quality_desc: 'Resolution of poster images from TMDB',
+  set_overlay_align_name: 'Card overlay alignment',
+  set_overlay_align_desc: 'Horizontal alignment of title and metadata on the card',
+  val_overlay_align_start: 'Left',
+  val_overlay_align_center: 'Center',
+  val_overlay_align_end: 'Right',
+  set_section_cards: 'Cards',
+  set_section_text: 'Text & Fonts',
+  set_section_clock: 'Clock',
+  set_section_data: 'Data',
+  set_card_image_mode_name: 'Card image type',
+  set_card_image_mode_desc: 'Backdrop + logo or poster without logo',
+  val_card_image_backdrop: 'Backdrop + Logo',
+  val_card_image_poster: 'Poster'
 };

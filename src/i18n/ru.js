@@ -1,7 +1,7 @@
 export const ru = {
   nav_feed: 'Лента',
   badge_movie: 'ФИЛЬМ', badge_tv: 'СЕРИАЛ',
-  set_about_desc: 'Версия 0.3.11  Авторы: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
+  set_about_desc: 'Версия 0.3.12  Авторы: llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z',
   set_main_title: 'Основные настройки',
   set_enable_name: 'AppleTV AgNative',
   set_enable_desc: 'Включает и выключает плагин',
@@ -48,5 +48,20 @@ export const ru = {
   val_perf_auto: 'Автоматически',
   val_perf_high: 'Максимум (все эффекты)',
   val_perf_low: 'Слабое устройство',
-  val_perf_ultra: 'Очень слабое устройство'
+  val_perf_ultra: 'Очень слабое устройство',
+  set_poster_quality_name: 'Качество постеров',
+  set_poster_quality_desc: 'Разрешение изображений постеров с TMDB',
+  set_overlay_align_name: 'Выравнивание подписи карточки',
+  set_overlay_align_desc: 'Горизонтальное выравнивание названия и метаданных на карточке',
+  val_overlay_align_start: 'По левому краю',
+  val_overlay_align_center: 'По центру',
+  val_overlay_align_end: 'По правому краю',
+  set_section_cards: 'Карточки',
+  set_section_text: 'Текст и шрифты',
+  set_section_clock: 'Часы',
+  set_section_data: 'Данные',
+  set_card_image_mode_name: 'Тип изображения карточки',
+  set_card_image_mode_desc: 'Бекдроп + логотип или постер без логотипа',
+  val_card_image_backdrop: 'Бекдроп + Логотип',
+  val_card_image_poster: 'Постер'
 };
