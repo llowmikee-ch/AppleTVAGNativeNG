@@ -646,7 +646,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       var type = (item.media_type === 'tv' || (item.name !== undefined && item.title === undefined)) ? 'tv' : 'movie';
 
       var bg = hero.querySelector('.agnative-hero__bg');
-      if (bg && item.backdrop_path) bg.src = Lampa.TMDB.image('t/p/w1280' + item.backdrop_path);
+      if (bg) bg.src = item.backdrop_path ? Lampa.TMDB.image('t/p/w1280' + item.backdrop_path) : (item._heroFallbackImg || '');
 
       var year = (item.release_date || item.first_air_date || '').slice(0, 4);
       var vote = item.vote_average ? parseFloat(item.vote_average).toFixed(1) : '';
@@ -711,7 +711,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       if (!heroBannerEnabled()) return;
       if (document.querySelector('.agnative-hero')) return;
 
-      var scrollContent = document.querySelector('.activity--active .scroll__content');
+      var scrollContent = document.querySelector('.activity--active .scroll__content') || document.querySelector('.scroll__content');
       if (!scrollContent) return;
       var firstLine = scrollContent.querySelector('.items-line');
       if (!firstLine) return;
@@ -720,7 +720,14 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       heroItems = [];
       for (var i = 0; i < cards.length && heroItems.length < 5; i++) {
         var data = extractCardData(cards[i]);
-        if (data && data.id && data.backdrop_path) heroItems.push(data);
+        if (!data || !data.id) continue;
+        if (!data.backdrop_path) {
+          var imgEl = cards[i].querySelector('.card__img');
+          var src = imgEl && (imgEl.src || imgEl.getAttribute('data-nfx-original-src'));
+          if (src && src.indexOf('http') === 0) data._heroFallbackImg = src;
+          else continue;
+        }
+        heroItems.push(data);
       }
       if (!heroItems.length) return;
 
@@ -1393,11 +1400,9 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
           }, 500);
           schedulePatch();
           try {
-            var comp = e.object && e.object.activity && typeof e.object.activity.get === 'function'
-              ? e.object.activity.get('component') : null;
-            if (comp === 'main') {
+            if (e.object && e.object.component === 'main') {
               removeHeroBanner();
-              setTimeout(buildHeroBanner, 800);
+              setTimeout(buildHeroBanner, 900);
             }
           } catch (err) { }
         }
@@ -4518,6 +4523,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     observeMenuChanges();
     if (!content) return;
     processCards(content);
+    if (!document.querySelector('.agnative-hero')) setTimeout(buildHeroBanner, 300);
   }
 
   function schedulePatch() {
