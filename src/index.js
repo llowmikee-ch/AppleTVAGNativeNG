@@ -710,7 +710,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
         }
         try {
           Lampa.Controller.collectionSet($(hero));
-          Lampa.Controller.collectionFocus(btn, $(hero), true);
+          Lampa.Controller.collectionFocus(btn, $(hero));
         } catch (e) { }
       },
       up: function () {
@@ -1472,9 +1472,10 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
           schedulePatch();
           try {
             if (e.object && e.object.component === 'main') {
-              removeHeroBanner();
-              setTimeout(buildHeroBanner, 900);
-              setTimeout(focusHeroPlayButton, 1300);
+              if (!document.querySelector('.agnative-hero')) {
+                setTimeout(buildHeroBanner, 900);
+                // focus handled internally by buildHeroBanner once it builds
+              }
             }
           } catch (err) { }
         }
@@ -2893,7 +2894,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       '  }',
       '  body.' + BODY_CLASS + ' .settings__body { font-size: 1.1em !important; }',
       '}',
-      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:100%; height:78vh; min-height:440px; overflow:hidden; margin:0 0 .8em; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; }',
+      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:-4em -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:0; }',
       'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
       'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
       'body.' + BODY_CLASS + ' .agnative-hero__gradient { position:absolute; inset:0; border-radius:0; background:linear-gradient(0deg, var(--body-bg, #0a0a0f) 0%, rgba(0,0,0,.55) 18%, rgba(0,0,0,.18) 48%, transparent 88%), linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.30) 28%, rgba(0,0,0,.05) 55%, transparent 78%); pointer-events:none; }',
