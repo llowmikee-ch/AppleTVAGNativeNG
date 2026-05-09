@@ -1320,18 +1320,23 @@
         var firstLine = scrollContent.querySelector('.items-line');
         if (!firstLine) return;
 
+        // Main screen heuristic: multiple items-lines, no detail-page markers
+        var lineCount = scrollContent.querySelectorAll('.items-line').length;
+        if (lineCount < 2) return;
+        if (document.querySelector('.full-start, .info-start, .player__maket')) return;
+
         var cards = scrollContent.querySelectorAll('.items-line .card');
         heroItems = [];
         for (var i = 0; i < cards.length && heroItems.length < 5; i++) {
           var data = extractCardData(cards[i]);
           if (!data || !data.id) continue;
-          if (!data.backdrop_path) {
+          if (data.backdrop_path) {
+            heroItems.push(data);
+          } else {
             var imgEl = cards[i].querySelector('.card__img');
-            var src = imgEl && (imgEl.src || imgEl.getAttribute('data-nfx-original-src'));
-            if (src && src.indexOf('http') === 0) data._heroFallbackImg = src;
-            else continue;
+            var src = imgEl && (imgEl.tagName === 'IMG' ? imgEl.src : '') || imgEl && imgEl.getAttribute('data-nfx-original-src') || '';
+            if (src && src.indexOf('tmdb') !== -1) { data._heroFallbackImg = src; heroItems.push(data); }
           }
-          heroItems.push(data);
         }
         if (!heroItems.length) return;
 
@@ -5012,6 +5017,7 @@
             for (var m = 0; m < eps.length; m++) switchEpisodeCardToBackdrop(eps[m]);
           }
         }
+        if (!document.querySelector('.agnative-hero')) setTimeout(buildHeroBanner, 200);
       }
 
       new MutationObserver(function (mutations) {
