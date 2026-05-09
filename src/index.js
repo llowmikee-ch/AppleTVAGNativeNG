@@ -64,6 +64,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
   var heroRotationTimer = null;
   var heroCurrentIndex = 0;
   var heroItems = [];
+  var heroCurrentItem = null;
   var storageListenerBound = false;
   var activityListenerBound = false;
   var fullListenerBound = false;
@@ -636,14 +637,26 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     if (hero) hero.remove();
     heroItems = [];
     heroCurrentIndex = 0;
+    heroCurrentItem = null;
+    if (document.body) document.body.classList.remove('agnative-has-hero');
+  }
+
+  function detectHeroItemType(item) {
+    if (!item) return 'movie';
+    if (item.media_type === 'tv' || item.media_type === 'movie') return item.media_type;
+    if (item.first_air_date && !item.release_date) return 'tv';
+    if (item.release_date) return 'movie';
+    if (item.name && !item.title) return 'tv';
+    return 'movie';
   }
 
   function renderHeroSlide(item) {
     var hero = document.querySelector('.agnative-hero');
     if (!hero || !item) return;
+    heroCurrentItem = item;
     try {
       var id = item.id;
-      var type = (item.media_type === 'tv' || (item.name !== undefined && item.title === undefined)) ? 'tv' : 'movie';
+      var type = detectHeroItemType(item);
 
       var bg = hero.querySelector('.agnative-hero__bg');
       if (bg) bg.src = item.backdrop_path ? Lampa.TMDB.image('t/p/w1280' + item.backdrop_path) : (item._heroFallbackImg || '');
@@ -682,17 +695,16 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
         });
       }
 
-      var playBtn = hero.querySelector('.agnative-hero__play');
-      if (playBtn) {
-        var openItem = function () {
-          try {
-            if (!window.Lampa || !Lampa.Activity) return;
-            var src = (Lampa.Storage && Lampa.Storage.field) ? Lampa.Storage.field('source') : 'tmdb';
-            Lampa.Activity.push({ url: '', title: item.title || item.name || '', component: 'full', id: item.id, method: type, source: src, card: item });
-          } catch (e) { }
-        };
-        bindAction(playBtn, openItem);
-      }
+    } catch (e) { }
+  }
+
+  function openHeroCurrentItem() {
+    try {
+      var item = heroCurrentItem;
+      if (!item || !window.Lampa || !Lampa.Activity) return;
+      var type = detectHeroItemType(item);
+      var src = (Lampa.Storage && Lampa.Storage.field) ? Lampa.Storage.field('source') : 'tmdb';
+      Lampa.Activity.push({ url: '', title: item.title || item.name || '', component: 'full', id: item.id, method: type, source: src, card: item });
     } catch (e) { }
   }
 
@@ -840,6 +852,11 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
         console.warn('[agnative-hero] insertBefore failed, falling back to prepend on scrollContent', e);
         scrollContent.insertBefore(hero, scrollContent.firstChild);
       }
+
+      // Bind action ONCE on the play button — handler reads heroCurrentItem at click time
+      bindAction(playBtn, openHeroCurrentItem);
+
+      if (document.body) document.body.classList.add('agnative-has-hero');
 
       heroCurrentIndex = 0;
       renderHeroSlide(heroItems[0]);
@@ -2894,7 +2911,10 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       '  }',
       '  body.' + BODY_CLASS + ' .settings__body { font-size: 1.1em !important; }',
       '}',
-      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:-4em -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:0; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .activity__body { padding-top:0 !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .scroll__content { padding-top:0 !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background-overlay, body.' + BODY_CLASS + '.agnative-has-hero .head__shadow { display:none !important; background:transparent !important; box-shadow:none !important; }',
+      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:0; }',
       'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
       'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
       'body.' + BODY_CLASS + ' .agnative-hero__gradient { position:absolute; inset:0; border-radius:0; background:linear-gradient(0deg, var(--body-bg, #0a0a0f) 0%, rgba(0,0,0,.55) 18%, rgba(0,0,0,.18) 48%, transparent 88%), linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.30) 28%, rgba(0,0,0,.05) 55%, transparent 78%); pointer-events:none; }',
