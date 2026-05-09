@@ -707,19 +707,18 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
 
   function buildHeroBanner() {
     try {
-      if (resolvePerfLevel() === 'ultra') return;
-      if (!heroBannerEnabled()) return;
+      if (resolvePerfLevel() === 'ultra') { console.warn('[agnative-hero] skip: perf=ultra'); return; }
+      if (!heroBannerEnabled()) { console.warn('[agnative-hero] skip: disabled in settings'); return; }
       if (document.querySelector('.agnative-hero')) return;
 
       var scrollContent = document.querySelector('.activity--active .scroll__content') || document.querySelector('.scroll__content');
-      if (!scrollContent) return;
+      if (!scrollContent) { console.warn('[agnative-hero] skip: no .scroll__content'); return; }
       var firstLine = scrollContent.querySelector('.items-line');
-      if (!firstLine) return;
+      if (!firstLine) { console.warn('[agnative-hero] skip: no .items-line'); return; }
 
-      // Main screen heuristic: multiple items-lines, no detail-page markers
       var lineCount = scrollContent.querySelectorAll('.items-line').length;
-      if (lineCount < 2) return;
-      if (document.querySelector('.full-start, .info-start, .player__maket')) return;
+      if (lineCount < 2) { console.warn('[agnative-hero] skip: only ' + lineCount + ' items-line(s)'); return; }
+      if (document.querySelector('.full-start, .info-start, .player__maket')) { console.warn('[agnative-hero] skip: detail page detected'); return; }
 
       var cards = scrollContent.querySelectorAll('.items-line .card');
       heroItems = [];
@@ -734,10 +733,10 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
           if (src && src.indexOf('tmdb') !== -1) { data._heroFallbackImg = src; heroItems.push(data); }
         }
       }
-      if (!heroItems.length) return;
+      if (!heroItems.length) { console.warn('[agnative-hero] skip: no cards with data (cards in DOM: ' + cards.length + ')'); return; }
 
       var hero = document.createElement('div');
-      hero.className = 'agnative-hero';
+      hero.className = 'agnative-hero agnative-hero--visible';
 
       var bg = document.createElement('img');
       bg.className = 'agnative-hero__bg';
@@ -771,18 +770,19 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       hero.appendChild(gradient);
       hero.appendChild(content);
 
-      scrollContent.insertBefore(hero, firstLine);
+      // Insert before the first items-line in its actual parent (not scrollContent — items-line may be nested)
+      var insertParent = firstLine.parentNode;
+      try { insertParent.insertBefore(hero, firstLine); }
+      catch (e) {
+        console.warn('[agnative-hero] insertBefore failed, falling back to prepend on scrollContent', e);
+        scrollContent.insertBefore(hero, scrollContent.firstChild);
+      }
 
       heroCurrentIndex = 0;
       renderHeroSlide(heroItems[0]);
-
-      requestAnimationFrame(function () {
-        var h = document.querySelector('.agnative-hero');
-        if (h) h.classList.add('agnative-hero--visible');
-      });
-
       startHeroRotation();
-    } catch (e) { }
+      console.warn('[agnative-hero] built with ' + heroItems.length + ' item(s), parent=' + (insertParent && insertParent.className));
+    } catch (e) { console.warn('[agnative-hero] error', e); }
   }
 
   function registerSettings() {
@@ -2826,7 +2826,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       '  }',
       '  body.' + BODY_CLASS + ' .settings__body { font-size: 1.1em !important; }',
       '}',
-      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:100%; height:45vh; min-height:280px; overflow:hidden; margin-bottom:1.5em; border-radius:1.2em; opacity:0; transition:opacity .6s ease; flex-shrink:0; }',
+      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:100%; height:45vh; min-height:280px; overflow:hidden; margin-bottom:1.5em; border-radius:1.2em; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; }',
       'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
       'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; border-radius:1.2em; }',
       'body.' + BODY_CLASS + ' .agnative-hero__gradient { position:absolute; inset:0; border-radius:1.2em; background:linear-gradient(0deg, var(--body-bg, #0a0a0f) 0%, rgba(0,0,0,.38) 42%, rgba(0,0,0,.12) 70%, transparent 100%), linear-gradient(90deg, rgba(0,0,0,.48) 0%, rgba(0,0,0,.22) 42%, transparent 72%); }',
@@ -4565,7 +4565,16 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     watchSettingsLifecycle();
     processCards(document.body);
     schedulePatch();
-    setTimeout(buildHeroBanner, 800);
+    // Polling retry: try build hero every 1s for 30s, until built
+    var heroAttempts = 0;
+    var heroPoll = setInterval(function () {
+      heroAttempts++;
+      if (heroAttempts > 30 || document.querySelector('.agnative-hero') || !pluginEnabled() || !heroBannerEnabled()) {
+        clearInterval(heroPoll);
+        return;
+      }
+      buildHeroBanner();
+    }, 1000);
   }
 
   function bootPlugin() {
