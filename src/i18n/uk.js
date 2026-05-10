@@ -68,5 +68,9 @@ export const uk = {
   set_logo_title_desc: 'Показувати назву локальною мовою, якщо логотип завантажено лише англійською',
   val_logo_title_off: 'Ні',
   val_logo_title_below: 'Так, знизу логотипу',
-  val_logo_title_above: 'Так, зверху логотипу'
+  val_logo_title_above: 'Так, зверху логотипу',
+  set_hero_name: 'Hero банер',
+  set_hero_desc: 'Великий банер вгорі головного екрану',
+  hero_btn_watch: 'Дивитися',
+  set_section_beta: 'Beta - функції'
 };

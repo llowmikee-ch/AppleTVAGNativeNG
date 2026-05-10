@@ -68,5 +68,9 @@ export const en = {
   set_logo_title_desc: 'Show title in local language when only an English logo is available',
   val_logo_title_off: 'No',
   val_logo_title_below: 'Yes, below logo',
-  val_logo_title_above: 'Yes, above logo'
+  val_logo_title_above: 'Yes, above logo',
+  set_hero_name: 'Hero banner',
+  set_hero_desc: 'Large banner at the top of the main screen',
+  hero_btn_watch: 'Watch',
+  set_section_beta: 'Beta features'
 };

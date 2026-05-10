@@ -68,5 +68,9 @@ export const ru = {
   set_logo_title_desc: 'Показывать название на локальном языке, если логотип загружен только на английском',
   val_logo_title_off: 'Нет',
   val_logo_title_below: 'Да, снизу логотипа',
-  val_logo_title_above: 'Да, сверху логотипа'
+  val_logo_title_above: 'Да, сверху логотипа',
+  set_hero_name: 'Hero баннер',
+  set_hero_desc: 'Большой баннер вверху главного экрана',
+  hero_btn_watch: 'Смотреть',
+  set_section_beta: 'Beta - функции'
 };

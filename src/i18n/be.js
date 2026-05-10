@@ -68,5 +68,9 @@ export const be = {
   set_logo_title_desc: 'Паказваць назву на мясцовай мове, калі лагатып загружаны толькі на англійскай',
   val_logo_title_off: 'Не',
   val_logo_title_below: 'Так, пад лагатыкам',
-  val_logo_title_above: 'Так, над лагатыкам'
+  val_logo_title_above: 'Так, над лагатыкам',
+  set_hero_name: 'Hero банер',
+  set_hero_desc: 'Вялікі банер угары галоўнага экрана',
+  hero_btn_watch: 'Глядзець',
+  set_section_beta: 'Beta - функцыі'
 };
