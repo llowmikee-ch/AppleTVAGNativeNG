@@ -642,15 +642,17 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     if (document.body) document.body.classList.remove('agnative-has-hero');
   }
 
-  function extractDominantColor(imgEl, callback) {
-    if (!imgEl) return callback(null);
-    function go() {
+  function extractDominantColor(url, callback) {
+    if (!url) return callback(null);
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function () {
       try {
         var canvas = document.createElement('canvas');
         var w = 32, h = 32;
         canvas.width = w; canvas.height = h;
         var ctx = canvas.getContext('2d');
-        ctx.drawImage(imgEl, 0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
         var data = ctx.getImageData(0, 0, w, h).data;
         var r = 0, g = 0, b = 0, count = 0;
         for (var i = 0; i < data.length; i += 4) {
@@ -659,16 +661,14 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
           if (lum < 25 || lum > 230) continue;
           r += pr; g += pg; b += pb; count++;
         }
-        if (count === 0) return callback(null);
-        callback({ r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) });
-      } catch (e) { callback(null); }
-    }
-    if (imgEl.complete && imgEl.naturalWidth > 0) go();
-    else {
-      try { imgEl.crossOrigin = 'anonymous'; } catch (e) { }
-      imgEl.addEventListener('load', go, { once: true });
-      imgEl.addEventListener('error', function () { callback(null); }, { once: true });
-    }
+        if (count === 0) { console.warn('[agnative-hero] color extract: no usable pixels'); return callback(null); }
+        var result = { r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) };
+        console.warn('[agnative-hero] dominant color:', result);
+        callback(result);
+      } catch (e) { console.warn('[agnative-hero] canvas error (CORS?):', e.message); callback(null); }
+    };
+    img.onerror = function () { console.warn('[agnative-hero] image load error for color extract'); callback(null); };
+    img.src = url;
   }
 
   function applyHeroAccent(rgb) {
@@ -704,9 +704,8 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       if (bg) {
         var newSrc = item.backdrop_path ? Lampa.TMDB.image('t/p/w1280' + item.backdrop_path) : (item._heroFallbackImg || '');
         if (bg.src !== newSrc) {
-          try { bg.crossOrigin = 'anonymous'; } catch (e) { }
           bg.src = newSrc;
-          extractDominantColor(bg, applyHeroAccent);
+          extractDominantColor(newSrc, applyHeroAccent);
         }
       }
 
@@ -2990,8 +2989,9 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .scroll__content { padding-top:0 !important; }',
       'body.' + BODY_CLASS + '.agnative-has-hero .head, body.' + BODY_CLASS + '.agnative-has-hero .head__body, body.' + BODY_CLASS + '.agnative-has-hero .head__layer, body.' + BODY_CLASS + '.agnative-has-hero .head__wrapper, body.' + BODY_CLASS + '.agnative-has-hero .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background-overlay, body.' + BODY_CLASS + '.agnative-has-hero .head__shadow, body.' + BODY_CLASS + '.agnative-has-hero .head__bg, body.' + BODY_CLASS + '.agnative-has-hero .head__back, body.' + BODY_CLASS + '.agnative-has-hero .head__overlay { background:transparent !important; background-image:none !important; box-shadow:none !important; filter:none !important; }',
       'body.' + BODY_CLASS + '.agnative-has-hero .head::before, body.' + BODY_CLASS + '.agnative-has-hero .head::after, body.' + BODY_CLASS + '.agnative-has-hero .activity::before, body.' + BODY_CLASS + '.agnative-has-hero .activity::after, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::before, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::after, body.' + BODY_CLASS + '.agnative-has-hero .app::before, body.' + BODY_CLASS + '.agnative-has-hero .app::after { content:none !important; display:none !important; background:transparent !important; background-image:none !important; }',
-      'body.' + BODY_CLASS + '.agnative-has-hero { background-image:none !important; transition:background-color 1.2s ease !important; }',
-      'body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .activity--active { background:linear-gradient(180deg, rgba(var(--agnative-hero-accent-rgb), .55) 0%, rgba(var(--agnative-hero-accent-rgb), .25) 35%, var(--body-bg, #0a0a0f) 75vh) !important; transition:background 1.2s ease !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero { background-image:none !important; transition:background 1.2s ease !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] { background:linear-gradient(180deg, rgba(var(--agnative-hero-accent-rgb,10,10,15), .60) 0%, rgba(var(--agnative-hero-accent-rgb,10,10,15), .30) 35%, var(--body-bg, #0a0a0f) 75vh) !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .app, body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .activity, body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .activity--active, body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .activity__body { background:transparent !important; }',
       'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:8; }',
       'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
       'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
