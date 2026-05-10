@@ -672,27 +672,9 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
   }
 
   function applyHeroAccent(rgb) {
-    if (!document.body) return;
-    var transparentTargets = document.querySelectorAll('.app, .activity, .activity--active, .activity__body, .activity__container');
-    if (!rgb) {
-      document.body.style.removeProperty('--agnative-hero-accent');
-      document.body.style.removeProperty('--agnative-hero-accent-rgb');
-      document.body.style.background = '';
-      for (var ti = 0; ti < transparentTargets.length; ti++) transparentTargets[ti].style.background = '';
-      return;
-    }
-    var rgbStr = rgb.r + ',' + rgb.g + ',' + rgb.b;
-    document.body.style.setProperty('--agnative-hero-accent', 'rgb(' + rgbStr + ')');
-    document.body.style.setProperty('--agnative-hero-accent-rgb', rgbStr);
-    // Apply gradient inline to body for max specificity, force transparency on wrappers
-    document.body.style.background = 'linear-gradient(180deg, #0a0a0f 0%, #0a0a0f 6vh, rgba(' + rgbStr + ',0.55) 35vh, rgba(' + rgbStr + ',0.65) 70vh, rgba(' + rgbStr + ',0.30) 100vh, #0a0a0f 140vh) no-repeat fixed';
-    document.body.style.transition = 'background 1.2s ease';
-    for (var t = 0; t < transparentTargets.length; t++) {
-      transparentTargets[t].style.background = 'transparent';
-      transparentTargets[t].style.backgroundColor = 'transparent';
-      transparentTargets[t].style.transition = 'background 1.2s ease';
-    }
-    console.warn('[agnative-hero] applied accent gradient to body, transparent wrappers count:', transparentTargets.length);
+    // Reverted: accent gradient on body was creating a dark band at top of screen.
+    // Keeping function as no-op to preserve API for other callers.
+    return;
   }
 
   function detectHeroItemType(item) {
@@ -3001,13 +2983,11 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .scroll__content { padding-top:0 !important; }',
       'body.' + BODY_CLASS + '.agnative-has-hero .head, body.' + BODY_CLASS + '.agnative-has-hero .head__body, body.' + BODY_CLASS + '.agnative-has-hero .head__layer, body.' + BODY_CLASS + '.agnative-has-hero .head__wrapper, body.' + BODY_CLASS + '.agnative-has-hero .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background-overlay, body.' + BODY_CLASS + '.agnative-has-hero .head__shadow, body.' + BODY_CLASS + '.agnative-has-hero .head__bg, body.' + BODY_CLASS + '.agnative-has-hero .head__back, body.' + BODY_CLASS + '.agnative-has-hero .head__overlay { background:transparent !important; background-image:none !important; box-shadow:none !important; filter:none !important; }',
       'body.' + BODY_CLASS + '.agnative-has-hero .head::before, body.' + BODY_CLASS + '.agnative-has-hero .head::after, body.' + BODY_CLASS + '.agnative-has-hero .activity::before, body.' + BODY_CLASS + '.agnative-has-hero .activity::after, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::before, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::after, body.' + BODY_CLASS + '.agnative-has-hero .app::before, body.' + BODY_CLASS + '.agnative-has-hero .app::after { content:none !important; display:none !important; background:transparent !important; background-image:none !important; }',
-      'body.' + BODY_CLASS + '.agnative-has-hero { background-image:none !important; transition:background 1.2s ease !important; }',
-      'body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] { background:linear-gradient(180deg, rgba(var(--agnative-hero-accent-rgb,10,10,15), .60) 0%, rgba(var(--agnative-hero-accent-rgb,10,10,15), .30) 35%, var(--body-bg, #0a0a0f) 75vh) !important; }',
-      'body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .app, body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .activity, body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .activity--active, body.' + BODY_CLASS + '.agnative-has-hero[style*="--agnative-hero-accent-rgb"] .activity__body { background:transparent !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero { background-image:none !important; }',
       'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:8; }',
       'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
       'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
-      'body.' + BODY_CLASS + ' .agnative-hero__gradient { position:absolute; inset:0; border-radius:0; background:linear-gradient(0deg, transparent 0%, rgba(0,0,0,.40) 14%, rgba(0,0,0,.15) 32%, transparent 55%); pointer-events:none; }',
+      'body.' + BODY_CLASS + ' .agnative-hero__gradient { position:absolute; inset:0; border-radius:0; background:linear-gradient(0deg, var(--body-bg, #0a0a0f) 0%, rgba(0,0,0,.65) 12%, rgba(0,0,0,.25) 30%, transparent 50%); pointer-events:none; }',
       'body.' + BODY_CLASS + ' .agnative-hero__content { position:absolute; left:3em; right:auto; bottom:3.2em; max-width:42%; display:flex; flex-direction:column; align-items:flex-start; z-index:2; padding:1.2em 1.5em 1.2em 0; }',
       'body.' + BODY_CLASS + ' .agnative-hero__content::before { content:""; position:absolute; inset:0 0 0 -3em; background:radial-gradient(ellipse 100% 100% at 30% 60%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.20) 60%, transparent 100%); z-index:-1; pointer-events:none; }',
       'body.' + BODY_CLASS + ' .agnative-hero__badge { font-size:.72em; font-weight:800; letter-spacing:.18em; color:rgba(255,255,255,.92); margin-bottom:.7em; padding:.32em .9em; border-radius:.45em; background:rgba(20,22,28,.55); border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%); text-shadow:0 1px 6px rgba(0,0,0,.6); }',
