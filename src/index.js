@@ -673,14 +673,26 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
 
   function applyHeroAccent(rgb) {
     if (!document.body) return;
+    var transparentTargets = document.querySelectorAll('.app, .activity, .activity--active, .activity__body, .activity__container');
     if (!rgb) {
       document.body.style.removeProperty('--agnative-hero-accent');
       document.body.style.removeProperty('--agnative-hero-accent-rgb');
+      document.body.style.background = '';
+      for (var ti = 0; ti < transparentTargets.length; ti++) transparentTargets[ti].style.background = '';
       return;
     }
     var rgbStr = rgb.r + ',' + rgb.g + ',' + rgb.b;
     document.body.style.setProperty('--agnative-hero-accent', 'rgb(' + rgbStr + ')');
     document.body.style.setProperty('--agnative-hero-accent-rgb', rgbStr);
+    // Apply gradient inline to body for max specificity, force transparency on wrappers
+    document.body.style.background = 'linear-gradient(180deg, rgba(' + rgbStr + ',0.65) 0%, rgba(' + rgbStr + ',0.30) 38%, #0a0a0f 75vh) no-repeat fixed';
+    document.body.style.transition = 'background 1.2s ease';
+    for (var t = 0; t < transparentTargets.length; t++) {
+      transparentTargets[t].style.background = 'transparent';
+      transparentTargets[t].style.backgroundColor = 'transparent';
+      transparentTargets[t].style.transition = 'background 1.2s ease';
+    }
+    console.warn('[agnative-hero] applied accent gradient to body, transparent wrappers count:', transparentTargets.length);
   }
 
   function detectHeroItemType(item) {
