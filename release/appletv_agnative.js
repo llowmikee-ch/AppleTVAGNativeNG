@@ -1449,9 +1449,6 @@
         bg.className = 'agnative-hero__bg';
         bg.alt = '';
 
-        var gradient = document.createElement('div');
-        gradient.className = 'agnative-hero__gradient';
-
         var content = document.createElement('div');
         content.className = 'agnative-hero__content';
 
@@ -1488,7 +1485,6 @@
         content.appendChild(overviewEl);
         content.appendChild(playBtn);
         hero.appendChild(bg);
-        hero.appendChild(gradient);
         hero.appendChild(content);
 
         // Insert before the first items-line in its actual parent (not scrollContent — items-line may be nested)
@@ -3574,7 +3570,6 @@
         'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:8; }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
         'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
-        'body.' + BODY_CLASS + ' .agnative-hero__gradient { position:absolute; inset:0; border-radius:0; background:linear-gradient(0deg, var(--body-bg, #0a0a0f) 0%, rgba(0,0,0,.65) 12%, rgba(0,0,0,.25) 30%, transparent 50%); pointer-events:none; }',
         'body.' + BODY_CLASS + ' .agnative-hero__content { position:absolute; left:3em; right:auto; bottom:3.2em; max-width:42%; display:flex; flex-direction:column; align-items:flex-start; z-index:2; padding:1.2em 1.5em 1.2em 0; }',
         'body.' + BODY_CLASS + ' .agnative-hero__content::before { content:""; position:absolute; inset:0 0 0 -3em; background:radial-gradient(ellipse 100% 100% at 30% 60%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.20) 60%, transparent 100%); z-index:-1; pointer-events:none; }',
         'body.' + BODY_CLASS + ' .agnative-hero__badge { font-size:.72em; font-weight:800; letter-spacing:.18em; color:rgba(255,255,255,.92); margin-bottom:.7em; padding:.32em .9em; border-radius:.45em; background:rgba(20,22,28,.55); border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%); text-shadow:0 1px 6px rgba(0,0,0,.6); }',
