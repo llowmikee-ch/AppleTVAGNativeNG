@@ -1504,31 +1504,7 @@
 
         if (document.body) document.body.classList.add('agnative-has-hero');
 
-        // Strip any inline gradient/background on head-related elements + activity body padding
-        try {
-          var headSelectors = [
-            '.head', '.head__body', '.head__layer', '.head__wrapper',
-            '.head__background', '.head__background-empty', '.head__background-overlay',
-            '.head__shadow', '.head__bg', '.head__back', '.head__overlay'
-          ];
-          for (var hs = 0; hs < headSelectors.length; hs++) {
-            var els = document.querySelectorAll(headSelectors[hs]);
-            for (var es = 0; es < els.length; es++) {
-              els[es].style.background = 'transparent';
-              els[es].style.backgroundImage = 'none';
-              els[es].style.boxShadow = 'none';
-            }
-          }
-          // Remove padding-top inline on every potential scroll/activity wrapper
-          var paddingTargets = document.querySelectorAll('.activity, .activity__body, .scroll, .scroll__body, .scroll__content');
-          for (var pt = 0; pt < paddingTargets.length; pt++) paddingTargets[pt].style.paddingTop = '0';
-          // Compensate any remaining vertical offset by pulling hero up with negative margin
-          var heroRect = hero.getBoundingClientRect();
-          if (heroRect.top > 0) {
-            hero.style.marginTop = (-heroRect.top) + 'px';
-            console.warn('[agnative-hero] compensating margin-top:', -heroRect.top + 'px');
-          }
-        } catch (e) { console.warn('[agnative-hero] diag error', e); }
+        // Keep Lampa's natural layout — no padding/margin overrides, no head stripping
 
         heroCurrentIndex = 0;
         renderHeroSlide(heroItems[0]);
@@ -3583,11 +3559,6 @@
         '  }',
         '  body.' + BODY_CLASS + ' .settings__body { font-size: 1.1em !important; }',
         '}',
-        'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .activity__body { padding-top:0 !important; }',
-        'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .scroll__content { padding-top:0 !important; }',
-        'body.' + BODY_CLASS + '.agnative-has-hero .head, body.' + BODY_CLASS + '.agnative-has-hero .head__body, body.' + BODY_CLASS + '.agnative-has-hero .head__layer, body.' + BODY_CLASS + '.agnative-has-hero .head__wrapper, body.' + BODY_CLASS + '.agnative-has-hero .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background-overlay, body.' + BODY_CLASS + '.agnative-has-hero .head__shadow, body.' + BODY_CLASS + '.agnative-has-hero .head__bg, body.' + BODY_CLASS + '.agnative-has-hero .head__back, body.' + BODY_CLASS + '.agnative-has-hero .head__overlay { background:transparent !important; background-image:none !important; box-shadow:none !important; filter:none !important; }',
-        'body.' + BODY_CLASS + '.agnative-has-hero .head::before, body.' + BODY_CLASS + '.agnative-has-hero .head::after, body.' + BODY_CLASS + '.agnative-has-hero .activity::before, body.' + BODY_CLASS + '.agnative-has-hero .activity::after, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::before, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::after, body.' + BODY_CLASS + '.agnative-has-hero .app::before, body.' + BODY_CLASS + '.agnative-has-hero .app::after { content:none !important; display:none !important; background:transparent !important; background-image:none !important; }',
-        'body.' + BODY_CLASS + '.agnative-has-hero { background-image:none !important; }',
         'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:8; }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
         'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
