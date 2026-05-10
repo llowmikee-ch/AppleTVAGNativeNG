@@ -1289,7 +1289,7 @@
       document.body.style.setProperty('--agnative-hero-accent', 'rgb(' + rgbStr + ')');
       document.body.style.setProperty('--agnative-hero-accent-rgb', rgbStr);
       // Apply gradient inline to body for max specificity, force transparency on wrappers
-      document.body.style.background = 'linear-gradient(180deg, rgb(' + rgbStr + ') 0%, rgba(' + rgbStr + ',0.85) 50vh, rgba(' + rgbStr + ',0.45) 80vh, rgba(' + rgbStr + ',0.18) 100vh, #0a0a0f 140vh) no-repeat fixed';
+      document.body.style.background = 'linear-gradient(180deg, #0a0a0f 0%, #0a0a0f 6vh, rgba(' + rgbStr + ',0.55) 35vh, rgba(' + rgbStr + ',0.65) 70vh, rgba(' + rgbStr + ',0.30) 100vh, #0a0a0f 140vh) no-repeat fixed';
       document.body.style.transition = 'background 1.2s ease';
       for (var t = 0; t < transparentTargets.length; t++) {
         transparentTargets[t].style.background = 'transparent';
