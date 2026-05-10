@@ -1462,7 +1462,7 @@
 
         if (document.body) document.body.classList.add('agnative-has-hero');
 
-        // Strip any inline gradient/background on head-related elements that CSS can't reach
+        // Strip any inline gradient/background on head-related elements + activity body padding
         try {
           var headSelectors = [
             '.head', '.head__body', '.head__layer', '.head__wrapper',
@@ -1475,6 +1475,27 @@
               els[es].style.background = 'transparent';
               els[es].style.backgroundImage = 'none';
               els[es].style.boxShadow = 'none';
+            }
+          }
+          // Remove activity padding-top via inline style (overrides Lampa's defaults)
+          var actBody = document.querySelector('.activity--active .activity__body');
+          if (actBody) actBody.style.paddingTop = '0';
+          var actEl = document.querySelector('.activity.activity--active');
+          if (actEl) actEl.style.paddingTop = '0';
+          var scrollEl = document.querySelector('.activity--active .scroll, .activity--active .scroll__content');
+          if (scrollEl) scrollEl.style.paddingTop = '0';
+          // Diagnostic: log computed style of head and any element with gradient at top
+          var headEl = document.querySelector('.head');
+          if (headEl) {
+            var cs = window.getComputedStyle(headEl);
+            console.warn('[agnative-hero] .head computed bg:', cs.background, 'bgImage:', cs.backgroundImage, 'boxShadow:', cs.boxShadow);
+          }
+          // Walk all direct body children and log any with gradient backgrounds
+          var bodyKids = document.body.children;
+          for (var bk = 0; bk < bodyKids.length; bk++) {
+            var bcs = window.getComputedStyle(bodyKids[bk]);
+            if (bcs.backgroundImage && bcs.backgroundImage.indexOf('gradient') !== -1) {
+              console.warn('[agnative-hero] body child has gradient:', bodyKids[bk].className || bodyKids[bk].tagName, bcs.backgroundImage);
             }
           }
         } catch (e) { }
