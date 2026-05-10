@@ -873,28 +873,29 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
             els[es].style.boxShadow = 'none';
           }
         }
-        // Remove activity padding-top via inline style (overrides Lampa's defaults)
-        var actBody = document.querySelector('.activity--active .activity__body');
-        if (actBody) actBody.style.paddingTop = '0';
-        var actEl = document.querySelector('.activity.activity--active');
-        if (actEl) actEl.style.paddingTop = '0';
-        var scrollEl = document.querySelector('.activity--active .scroll, .activity--active .scroll__content');
-        if (scrollEl) scrollEl.style.paddingTop = '0';
-        // Diagnostic: log computed style of head and any element with gradient at top
-        var headEl = document.querySelector('.head');
-        if (headEl) {
-          var cs = window.getComputedStyle(headEl);
-          console.warn('[agnative-hero] .head computed bg:', cs.background, 'bgImage:', cs.backgroundImage, 'boxShadow:', cs.boxShadow);
-        }
-        // Walk all direct body children and log any with gradient backgrounds
-        var bodyKids = document.body.children;
-        for (var bk = 0; bk < bodyKids.length; bk++) {
-          var bcs = window.getComputedStyle(bodyKids[bk]);
-          if (bcs.backgroundImage && bcs.backgroundImage.indexOf('gradient') !== -1) {
-            console.warn('[agnative-hero] body child has gradient:', bodyKids[bk].className || bodyKids[bk].tagName, bcs.backgroundImage);
+        // Remove padding-top inline on every potential scroll/activity wrapper
+        var paddingTargets = document.querySelectorAll('.activity, .activity__body, .scroll, .scroll__body, .scroll__content');
+        for (var pt = 0; pt < paddingTargets.length; pt++) paddingTargets[pt].style.paddingTop = '0';
+        // Diagnostic: walk EVERY element on page, log those with gradient at top of screen
+        var all = document.querySelectorAll('body, body *');
+        var found = 0;
+        for (var ai = 0; ai < all.length && found < 15; ai++) {
+          var el = all[ai];
+          var rect = el.getBoundingClientRect();
+          if (rect.top > 200 || rect.bottom < 0) continue; // skip elements not at top
+          var cs = window.getComputedStyle(el);
+          var hasGradient = cs.backgroundImage && cs.backgroundImage.indexOf('gradient') !== -1;
+          var hasBg = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent';
+          if (hasGradient || (hasBg && rect.height > 20 && rect.height < 200)) {
+            console.warn('[agnative-hero][TOP-EL]', el.tagName + '.' + (el.className || ''), 'bgImage:', cs.backgroundImage, 'bgColor:', cs.backgroundColor, 'rect:', Math.round(rect.top) + ',' + Math.round(rect.height));
+            found++;
           }
         }
-      } catch (e) { }
+        // Computed style of html/body
+        var hcs = window.getComputedStyle(document.documentElement);
+        var bcs2 = window.getComputedStyle(document.body);
+        console.warn('[agnative-hero] html bgImage:', hcs.backgroundImage, '| body bgImage:', bcs2.backgroundImage);
+      } catch (e) { console.warn('[agnative-hero] diag error', e); }
 
       heroCurrentIndex = 0;
       renderHeroSlide(heroItems[0]);
