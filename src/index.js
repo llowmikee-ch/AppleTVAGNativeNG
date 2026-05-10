@@ -858,6 +858,23 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
 
       if (document.body) document.body.classList.add('agnative-has-hero');
 
+      // Strip any inline gradient/background on head-related elements that CSS can't reach
+      try {
+        var headSelectors = [
+          '.head', '.head__body', '.head__layer', '.head__wrapper',
+          '.head__background', '.head__background-empty', '.head__background-overlay',
+          '.head__shadow', '.head__bg', '.head__back', '.head__overlay'
+        ];
+        for (var hs = 0; hs < headSelectors.length; hs++) {
+          var els = document.querySelectorAll(headSelectors[hs]);
+          for (var es = 0; es < els.length; es++) {
+            els[es].style.background = 'transparent';
+            els[es].style.backgroundImage = 'none';
+            els[es].style.boxShadow = 'none';
+          }
+        }
+      } catch (e) { }
+
       heroCurrentIndex = 0;
       renderHeroSlide(heroItems[0]);
       startHeroRotation();
@@ -2913,8 +2930,10 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       '}',
       'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .activity__body { padding-top:0 !important; }',
       'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .scroll__content { padding-top:0 !important; }',
-      'body.' + BODY_CLASS + '.agnative-has-hero .activity--active .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background-overlay, body.' + BODY_CLASS + '.agnative-has-hero .head__shadow { display:none !important; background:transparent !important; box-shadow:none !important; }',
-      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:0; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero .head, body.' + BODY_CLASS + '.agnative-has-hero .head__body, body.' + BODY_CLASS + '.agnative-has-hero .head__layer, body.' + BODY_CLASS + '.agnative-has-hero .head__wrapper, body.' + BODY_CLASS + '.agnative-has-hero .head__background, body.' + BODY_CLASS + '.agnative-has-hero .head__background-overlay, body.' + BODY_CLASS + '.agnative-has-hero .head__shadow, body.' + BODY_CLASS + '.agnative-has-hero .head__bg, body.' + BODY_CLASS + '.agnative-has-hero .head__back, body.' + BODY_CLASS + '.agnative-has-hero .head__overlay { background:transparent !important; background-image:none !important; box-shadow:none !important; filter:none !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero .head::before, body.' + BODY_CLASS + '.agnative-has-hero .head::after, body.' + BODY_CLASS + '.agnative-has-hero .activity::before, body.' + BODY_CLASS + '.agnative-has-hero .activity::after, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::before, body.' + BODY_CLASS + '.agnative-has-hero .activity--active::after, body.' + BODY_CLASS + '.agnative-has-hero .app::before, body.' + BODY_CLASS + '.agnative-has-hero .app::after { content:none !important; display:none !important; background:transparent !important; background-image:none !important; }',
+      'body.' + BODY_CLASS + '.agnative-has-hero { background-image:none !important; }',
+      'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:8; }',
       'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
       'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
       'body.' + BODY_CLASS + ' .agnative-hero__gradient { position:absolute; inset:0; border-radius:0; background:linear-gradient(0deg, var(--body-bg, #0a0a0f) 0%, rgba(0,0,0,.55) 18%, rgba(0,0,0,.18) 48%, transparent 88%), linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.30) 28%, rgba(0,0,0,.05) 55%, transparent 78%); pointer-events:none; }',
