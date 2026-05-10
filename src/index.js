@@ -900,20 +900,15 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
 
       if (document.body) document.body.classList.add('agnative-has-hero');
 
-      // Stretch the bg image upward to viewport top WITHOUT moving content below
+      // Stretch only the bg image upward to viewport top (gradient stays inside hero)
       try {
         var heroRect = hero.getBoundingClientRect();
         var offset = heroRect.top;
         if (offset > 0) {
           var bgEl = hero.querySelector('.agnative-hero__bg');
-          var gradientEl = hero.querySelector('.agnative-hero__gradient');
           if (bgEl) {
             bgEl.style.top = (-offset) + 'px';
             bgEl.style.height = 'calc(100% + ' + offset + 'px)';
-          }
-          if (gradientEl) {
-            gradientEl.style.top = (-offset) + 'px';
-            gradientEl.style.height = 'calc(100% + ' + offset + 'px)';
           }
           hero.style.overflow = 'visible';
         }
