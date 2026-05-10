@@ -1480,25 +1480,12 @@
           // Remove padding-top inline on every potential scroll/activity wrapper
           var paddingTargets = document.querySelectorAll('.activity, .activity__body, .scroll, .scroll__body, .scroll__content');
           for (var pt = 0; pt < paddingTargets.length; pt++) paddingTargets[pt].style.paddingTop = '0';
-          // Diagnostic: walk EVERY element on page, log those with gradient at top of screen
-          var all = document.querySelectorAll('body, body *');
-          var found = 0;
-          for (var ai = 0; ai < all.length && found < 15; ai++) {
-            var el = all[ai];
-            var rect = el.getBoundingClientRect();
-            if (rect.top > 200 || rect.bottom < 0) continue; // skip elements not at top
-            var cs = window.getComputedStyle(el);
-            var hasGradient = cs.backgroundImage && cs.backgroundImage.indexOf('gradient') !== -1;
-            var hasBg = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent';
-            if (hasGradient || (hasBg && rect.height > 20 && rect.height < 200)) {
-              console.warn('[agnative-hero][TOP-EL]', el.tagName + '.' + (el.className || ''), 'bgImage:', cs.backgroundImage, 'bgColor:', cs.backgroundColor, 'rect:', Math.round(rect.top) + ',' + Math.round(rect.height));
-              found++;
-            }
+          // Compensate any remaining vertical offset by pulling hero up with negative margin
+          var heroRect = hero.getBoundingClientRect();
+          if (heroRect.top > 0) {
+            hero.style.marginTop = (-heroRect.top) + 'px';
+            console.warn('[agnative-hero] compensating margin-top:', -heroRect.top + 'px');
           }
-          // Computed style of html/body
-          var hcs = window.getComputedStyle(document.documentElement);
-          var bcs2 = window.getComputedStyle(document.body);
-          console.warn('[agnative-hero] html bgImage:', hcs.backgroundImage, '| body bgImage:', bcs2.backgroundImage);
         } catch (e) { console.warn('[agnative-hero] diag error', e); }
 
         heroCurrentIndex = 0;
