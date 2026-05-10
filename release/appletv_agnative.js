@@ -1269,13 +1269,11 @@
             if (lum < 25 || lum > 230) continue;
             r += pr; g += pg; b += pb; count++;
           }
-          if (count === 0) { console.warn('[agnative-hero] color extract: no usable pixels'); return callback(null); }
-          var result = { r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) };
-          console.warn('[agnative-hero] dominant color:', result);
-          callback(result);
-        } catch (e) { console.warn('[agnative-hero] canvas error (CORS?):', e.message); callback(null); }
+          if (count === 0) return callback(null);
+          callback({ r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) });
+        } catch (e) { callback(null); }
       };
-      img.onerror = function () { console.warn('[agnative-hero] image load error for color extract'); callback(null); };
+      img.onerror = function () { callback(null); };
       img.src = url;
     }
 
@@ -1418,18 +1416,18 @@
 
     function buildHeroBanner() {
       try {
-        if (resolvePerfLevel() === 'ultra') { console.warn('[agnative-hero] skip: perf=ultra'); return; }
-        if (!heroBannerEnabled()) { console.warn('[agnative-hero] skip: disabled in settings'); return; }
+        if (resolvePerfLevel() === 'ultra') return;
+        if (!heroBannerEnabled()) return;
         if (document.querySelector('.agnative-hero')) return;
 
         var scrollContent = document.querySelector('.activity--active .scroll__content') || document.querySelector('.scroll__content');
-        if (!scrollContent) { console.warn('[agnative-hero] skip: no .scroll__content'); return; }
+        if (!scrollContent) return;
         var firstLine = scrollContent.querySelector('.items-line');
-        if (!firstLine) { console.warn('[agnative-hero] skip: no .items-line'); return; }
+        if (!firstLine) return;
 
         var lineCount = scrollContent.querySelectorAll('.items-line').length;
-        if (lineCount < 2) { console.warn('[agnative-hero] skip: only ' + lineCount + ' items-line(s)'); return; }
-        if (document.querySelector('.full-start, .info-start, .player__maket')) { console.warn('[agnative-hero] skip: detail page detected'); return; }
+        if (lineCount < 2) return;
+        if (document.querySelector('.full-start, .info-start, .player__maket')) return;
 
         var cards = scrollContent.querySelectorAll('.items-line .card');
         heroItems = [];
@@ -1444,7 +1442,7 @@
             if (src && src.indexOf('tmdb') !== -1) { data._heroFallbackImg = src; heroItems.push(data); }
           }
         }
-        if (!heroItems.length) { console.warn('[agnative-hero] skip: no cards with data (cards in DOM: ' + cards.length + ')'); return; }
+        if (!heroItems.length) return;
 
         var hero = document.createElement('div');
         hero.className = 'agnative-hero agnative-hero--visible';
@@ -1494,10 +1492,7 @@
         // Insert before the first items-line in its actual parent (not scrollContent — items-line may be nested)
         var insertParent = firstLine.parentNode;
         try { insertParent.insertBefore(hero, firstLine); }
-        catch (e) {
-          console.warn('[agnative-hero] insertBefore failed, falling back to prepend on scrollContent', e);
-          scrollContent.insertBefore(hero, scrollContent.firstChild);
-        }
+        catch (e) { scrollContent.insertBefore(hero, scrollContent.firstChild); }
 
         // Bind action ONCE on the play button — handler reads heroCurrentItem at click time
         bindAction(playBtn, openHeroCurrentItem);
@@ -1524,8 +1519,7 @@
         ensureHeroController();
         // Auto-focus on play button when hero is built (initial load on main)
         setTimeout(focusHeroPlayButton, 100);
-        console.warn('[agnative-hero] built with ' + heroItems.length + ' item(s), parent=' + (insertParent && insertParent.className));
-      } catch (e) { console.warn('[agnative-hero] error', e); }
+      } catch (e) { }
     }
 
     function registerSettings() {
