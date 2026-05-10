@@ -1504,7 +1504,24 @@
 
         if (document.body) document.body.classList.add('agnative-has-hero');
 
-        // Keep Lampa's natural layout — no padding/margin overrides, no head stripping
+        // Stretch the bg image upward to viewport top WITHOUT moving content below
+        try {
+          var heroRect = hero.getBoundingClientRect();
+          var offset = heroRect.top;
+          if (offset > 0) {
+            var bgEl = hero.querySelector('.agnative-hero__bg');
+            var gradientEl = hero.querySelector('.agnative-hero__gradient');
+            if (bgEl) {
+              bgEl.style.top = (-offset) + 'px';
+              bgEl.style.height = 'calc(100% + ' + offset + 'px)';
+            }
+            if (gradientEl) {
+              gradientEl.style.top = (-offset) + 'px';
+              gradientEl.style.height = 'calc(100% + ' + offset + 'px)';
+            }
+            hero.style.overflow = 'visible';
+          }
+        } catch (e) { }
 
         heroCurrentIndex = 0;
         renderHeroSlide(heroItems[0]);
