@@ -71,5 +71,6 @@ export const ru = {
   val_logo_title_above: 'Да, сверху логотипа',
   set_hero_name: 'Hero баннер',
   set_hero_desc: 'Большой баннер вверху главного экрана',
-  hero_btn_watch: 'Смотреть'
+  hero_btn_watch: 'Смотреть',
+  set_section_beta: 'Beta - функции'
 };

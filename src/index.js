@@ -624,7 +624,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
   }
 
   function heroBannerEnabled() {
-    try { return window.Lampa && Lampa.Storage.get(HERO_KEY, 'on') !== 'off'; } catch (e) { return false; }
+    try { return window.Lampa && Lampa.Storage.get(HERO_KEY, 'off') === 'on'; } catch (e) { return false; }
   }
 
   function stopHeroRotation() {
@@ -1093,24 +1093,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       Lampa.SettingsApi.addParam({
         component: SETTINGS_COMPONENT,
         param: {
-          name: HERO_KEY,
-          type: 'select',
-          values: { on: t('val_on'), off: t('val_off') },
-          default: 'on'
-        },
-        field: {
-          name: t('set_hero_name'),
-          description: t('set_hero_desc')
-        },
-        onChange: function (value) {
-          if (value === 'off') removeHeroBanner();
-          else buildHeroBanner();
-        }
-      });
-
-      Lampa.SettingsApi.addParam({
-        component: SETTINGS_COMPONENT,
-        param: {
           name: BACKDROP_KEY,
           type: 'select',
           values: { on: t('val_on'), off: t('val_off') },
@@ -1474,6 +1456,30 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
         },
         onChange: function () {
           prune(getCacheMaxBytes());
+        }
+      });
+
+      Lampa.SettingsApi.addParam({
+        component: SETTINGS_COMPONENT,
+        param: { type: 'title' },
+        field: { name: t('set_section_beta') }
+      });
+
+      Lampa.SettingsApi.addParam({
+        component: SETTINGS_COMPONENT,
+        param: {
+          name: HERO_KEY,
+          type: 'select',
+          values: { on: t('val_on'), off: t('val_off') },
+          default: 'off'
+        },
+        field: {
+          name: t('set_hero_name'),
+          description: t('set_hero_desc')
+        },
+        onChange: function (value) {
+          if (value === 'off') removeHeroBanner();
+          else buildHeroBanner();
         }
       });
 
@@ -2963,10 +2969,11 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       '  }',
       '  body.' + BODY_CLASS + ' .settings__body { font-size: 1.1em !important; }',
       '}',
+      'body.' + BODY_CLASS + ' .settings-param[data-name="' + HERO_KEY + '"] .settings-param__name::after { content:"BETA"; display:inline-block; margin-left:.6em; padding:.12em .5em; font-size:.55em; font-weight:800; letter-spacing:.06em; color:#fff; background:linear-gradient(135deg, #ff6b35, #c1272d); border-radius:.4em; vertical-align:middle; line-height:1.2; box-shadow:0 1px 4px rgba(193,39,45,.4); }',
       'body.' + BODY_CLASS + ' .agnative-hero { position:relative; width:auto; margin:0 -2em .8em; height:80vh; min-height:480px; overflow:hidden; border-radius:0; opacity:1; transition:opacity .6s ease; flex-shrink:0; display:block; z-index:8; }',
       'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
       'body.' + BODY_CLASS + ' .agnative-hero__bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; border-radius:0; }',
-      'body.' + BODY_CLASS + ' .agnative-hero__content { position:absolute; left:3em; right:auto; bottom:3.2em; max-width:42%; display:flex; flex-direction:column; align-items:flex-start; z-index:2; }',
+      'body.' + BODY_CLASS + ' .agnative-hero__content { position:absolute; left:5em; right:auto; bottom:3.2em; max-width:42%; display:flex; flex-direction:column; align-items:flex-start; z-index:2; }',
       'body.' + BODY_CLASS + ' .agnative-hero__badge { font-size:.72em; font-weight:800; letter-spacing:.18em; color:rgba(255,255,255,.92); margin-bottom:.7em; padding:.32em .9em; border-radius:.45em; background:rgba(20,22,28,.55); border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%); text-shadow:0 1px 6px rgba(0,0,0,.6); }',
       'body.' + BODY_CLASS + ' .agnative-hero__logo { max-height:5.5em; max-width:80%; object-fit:contain; object-position:left center; filter:drop-shadow(0 4px 12px rgba(0,0,0,.7)); margin:.1em 0 .45em; }',
       'body.' + BODY_CLASS + ' .agnative-hero__title { font-size:2.6em; font-weight:900; color:#fff; text-shadow:0 2px 18px rgba(0,0,0,.85); line-height:1.05; margin:0 0 .35em; letter-spacing:.005em; }',

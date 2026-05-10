@@ -71,5 +71,6 @@ export const uk = {
   val_logo_title_above: 'Так, зверху логотипу',
   set_hero_name: 'Hero банер',
   set_hero_desc: 'Великий банер вгорі головного екрану',
-  hero_btn_watch: 'Дивитися'
+  hero_btn_watch: 'Дивитися',
+  set_section_beta: 'Beta - функції'
 };

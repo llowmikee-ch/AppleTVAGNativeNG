@@ -71,5 +71,6 @@ export const en = {
   val_logo_title_above: 'Yes, above logo',
   set_hero_name: 'Hero banner',
   set_hero_desc: 'Large banner at the top of the main screen',
-  hero_btn_watch: 'Watch'
+  hero_btn_watch: 'Watch',
+  set_section_beta: 'Beta features'
 };

@@ -71,5 +71,6 @@ export const be = {
   val_logo_title_above: 'Так, над лагатыкам',
   set_hero_name: 'Hero банер',
   set_hero_desc: 'Вялікі банер угары галоўнага экрана',
-  hero_btn_watch: 'Глядзець'
+  hero_btn_watch: 'Глядзець',
+  set_section_beta: 'Beta - функцыі'
 };
