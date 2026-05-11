@@ -54,7 +54,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
   } = AGNATIVE_KEYS;
 
   var scheduled = false;
-  var scrollListenerBound = false;
   var clockTimer = null;
   var logoCache = {};
   var logoPending = {};
@@ -343,8 +342,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       if (panel) panel.remove();
       var leftdock = document.querySelector('.agnative-leftdock');
       if (leftdock) leftdock.remove();
-      var veil = document.querySelector('.agnative-head-veil');
-      if (veil) veil.remove();
       removeHeroBanner();
       disconnectMenuObserver();
       disconnectSettingsLifecycle();
@@ -2116,8 +2113,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
       'body.' + BODY_CLASS + ' .head__logo-icon {',
       '  display: none !important;',
       '}',
-      'body.' + BODY_CLASS + ' .agnative-head-veil { position:fixed; top:0; left:0; right:0; height:5em; pointer-events:none; z-index:18; background:linear-gradient(180deg, rgba(8,10,14,.85) 0%, rgba(8,10,14,.55) 35%, rgba(8,10,14,.20) 70%, transparent 100%); backdrop-filter:blur(8px) saturate(140%); -webkit-backdrop-filter:blur(8px) saturate(140%); opacity:0; transition:opacity .35s ease; }',
-      'body.' + BODY_CLASS + '.is-scrolled .agnative-head-veil { opacity:1; }',
       'body.' + BODY_CLASS + ' .activity--active .activity__body, body.' + BODY_CLASS + ' .activity--active .scroll, body.' + BODY_CLASS + ' .activity--active .scroll__content { padding-top:0 !important; }',
       'body.' + BODY_CLASS + ' .agnative-topnav-shell { position:absolute; left:50%; top:.46em; transform:translateX(-50%); z-index:20; width:max-content; max-width:calc(100vw - 24em); height:2.6em; display:inline-flex; align-items:center; box-sizing:border-box; }',
       'body.' + BODY_CLASS + ' .agnative-topnav-shell__inner { height:2.6em; box-sizing:border-box; display:inline-flex; align-items:center; gap:.18em; padding:.21em .32em; border-radius:999px; background:rgba(22,24,30,.28); border:1px solid rgba(255,255,255,.10); box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.12); backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%); }',
@@ -3828,50 +3823,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     btn.addEventListener('mousedown', swallow, true);
   }
 
-  function ensureHeadVeil() {
-    if (!document.body) return null;
-    var veil = qs('.agnative-head-veil');
-    if (!veil) {
-      veil = document.createElement('div');
-      veil.className = 'agnative-head-veil';
-      veil.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(veil);
-    }
-    bindScrollListener();
-    return veil;
-  }
-
-  function updateScrolledState() {
-    try {
-      var scrollEl = qs('.activity--active .scroll__body') || qs('.activity--active .scroll__content') || qs('.scroll__body') || qs('.scroll__content');
-      var y = 0;
-      if (scrollEl) {
-        var st = scrollEl.style.transform || '';
-        var m = st.match(/translate(?:3d)?\(([^,]+),\s*(-?[0-9.]+)/);
-        if (m) y = Math.abs(parseFloat(m[2]) || 0);
-        else if (scrollEl.scrollTop) y = scrollEl.scrollTop;
-      }
-      if (!y) y = window.scrollY || document.documentElement.scrollTop || 0;
-      if (document.body) {
-        if (y > 40) document.body.classList.add('is-scrolled');
-        else document.body.classList.remove('is-scrolled');
-      }
-    } catch (e) { }
-  }
-
-  function bindScrollListener() {
-    if (scrollListenerBound) return;
-    scrollListenerBound = true;
-    try {
-      window.addEventListener('scroll', updateScrolledState, true);
-      if (window.MutationObserver) {
-        var mo = new MutationObserver(function () { updateScrolledState(); });
-        var target = qs('.activity--active .scroll__body') || document.body;
-        if (target) mo.observe(target, { attributes: true, attributeFilter: ['style'] });
-      }
-    } catch (e) { }
-  }
-
   function buildLeftdock() {
     if (!document.body) return null;
     var dock = qs('.agnative-leftdock');
@@ -4717,7 +4668,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
 
     var content = qs('.activity--active .scroll__content') || qs('.scroll__content');
     patchTopnav();
-    ensureHeadVeil();
     buildLeftdock();
     syncLeftdockActive();
     observeMenuChanges();
