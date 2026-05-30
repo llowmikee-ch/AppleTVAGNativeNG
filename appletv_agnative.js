@@ -891,9 +891,6 @@
     var heroTrailerCache = {};
     var heroTrailerPending = {};
     var heroTrailerActive = false;
-    var heroUnplayable = {};
-    var heroBridgeId = null;
-    var heroMsgHandler = null;
     var storageListenerBound = false;
     var activityListenerBound = false;
     var fullListenerBound = false;
@@ -1705,9 +1702,7 @@
     function removeHeroBanner() {
       stopHeroRotation();
       if (heroIdleTimer) { clearTimeout(heroIdleTimer); heroIdleTimer = null; }
-      if (heroMsgHandler) { try { window.removeEventListener('message', heroMsgHandler); } catch (e) { } heroMsgHandler = null; }
       heroTrailerActive = false;
-      heroBridgeId = null;
       var hero = document.querySelector('.agnative-hero');
       if (hero) hero.remove();
       heroItems = [];
@@ -1986,24 +1981,6 @@
       return !!(btn && (btn.classList.contains('focus') || btn.classList.contains('hover')));
     }
 
-    // Reuse Lampa's own same-origin youtube.html bridge (it hosts the YouTube
-    // IFrame API and reports state via postMessage). Resolved relative to the
-    // app so it works in the native webview (Apple TV / Android TV) where a
-    // direct youtube.com iframe in the main document is blocked.
-    function lampaYoutubeBridgeUrl(id, bridgeId) {
-      var q = 'youtube.html?bridgeId=' + encodeURIComponent(bridgeId) +
-              '&videoId=' + encodeURIComponent(id) + '&autoplay=1&mute=1&controls=0';
-      try {
-        var origin = location.origin;
-        if (origin && origin !== 'null') {
-          var dir = location.pathname.replace(/\/[^/]*$/, '/');
-          if (dir.charAt(0) !== '/') dir = '/' + dir;
-          return origin + dir + q;
-        }
-      } catch (e) { }
-      return q; // relative fallback (file://)
-    }
-
     function heroValid(reqId) {
       return heroTrailerActive && heroPlayFocused() &&
         heroCurrentItem && heroCurrentItem.id === reqId &&
@@ -2034,11 +2011,6 @@
       var hero = document.querySelector('.agnative-hero');
       var wasActive = heroTrailerActive;
       heroTrailerActive = false;
-      heroBridgeId = null;
-      if (heroMsgHandler) {
-        try { window.removeEventListener('message', heroMsgHandler); } catch (e) { }
-        heroMsgHandler = null;
-      }
       if (hero) {
         hero.classList.remove('agnative-hero--trailer');
         var wrap = hero.querySelector('.agnative-hero__trailer');
@@ -2063,6 +2035,8 @@
       heroIdleTimer = setTimeout(heroStartTrailer, getHeroTrailerDelayMs());
     }
 
+    // Inline ("windowed") trailer using a plain YouTube embed iframe — the method
+    // that actually works in the Lampa webview on Apple TV / Android TV.
     function heroStartTrailer() {
       if (!heroTrailerEnabled() || !heroPlayFocused() || isUiLayerOpen()) return;
       var item = heroCurrentItem;
@@ -2076,60 +2050,33 @@
       stopHeroRotation();
 
       fetchHeroTrailer(item.id, type, function (key) {
-        if (!key || heroUnplayable[key]) { stopHeroTrailer(); return; }
+        if (!key) { stopHeroTrailer(); return; }
         if (!heroValid(reqId)) { stopHeroTrailer(); return; }
 
         var wrap = heroEnsureTrailerWrap();
         if (!wrap) { stopHeroTrailer(); return; }
 
-        var bridgeId = 'agnative_' + reqId + '_' + Date.now();
-        heroBridgeId = bridgeId;
-
         var settled = false;
-        var guard = setTimeout(function () {
-          // Nothing reported back / never loaded — give up cleanly so rotation resumes.
-          if (!settled) stopHeroTrailer();
-        }, 10000);
-
-        function revealOnce() {
-          if (settled) return;
-          settled = true;
-          clearTimeout(guard);
-          if (heroValid(reqId)) heroRevealTrailer();
-          else stopHeroTrailer();
-        }
+        // Safety net: if the embed never loads, resume slide rotation.
+        var guard = setTimeout(function () { if (!settled) stopHeroTrailer(); }, 12000);
 
         var iframe = document.createElement('iframe');
-
-        heroMsgHandler = function (ev) {
-          var d = ev && ev.data;
-          if (!d || d.bridgeId !== bridgeId) return;
-          if (d.type === 'error') {
-            heroUnplayable[key] = true;
-            settled = true;
-            clearTimeout(guard);
-            stopHeroTrailer();
-            return;
-          }
-          var state;
-          if (d.type === 'stateChange') state = (typeof d.data === 'number') ? d.data : (d.data && d.data.state);
-          else if (d.type === 'time') state = d.data && d.data.playerState;
-          if (state === 1) revealOnce();                 // playing
-          else if (state === 0) {                         // ended — loop
-            try { iframe.contentWindow.location.reload(); }
-            catch (e) { try { iframe.src = lampaYoutubeBridgeUrl(key, bridgeId); } catch (_) { } }
-          }
-        };
-        window.addEventListener('message', heroMsgHandler);
-
         iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allow', 'autoplay; encrypted-media');
+        iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
         iframe.allowFullscreen = false;
         iframe.addEventListener('load', function () {
-          // Backup reveal in case state messages don't arrive/parse on this device.
-          setTimeout(function () { if (!settled && heroValid(reqId)) revealOnce(); }, 2500);
+          // Reveal a moment after the embed loads (no JS-API handshake needed).
+          setTimeout(function () {
+            if (settled) return;
+            settled = true;
+            clearTimeout(guard);
+            if (heroValid(reqId)) heroRevealTrailer();
+            else stopHeroTrailer();
+          }, 900);
         });
-        iframe.src = lampaYoutubeBridgeUrl(key, bridgeId);
+        iframe.src = 'https://www.youtube.com/embed/' + key +
+          '?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=' + key +
+          '&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0';
         wrap.appendChild(iframe);
       });
     }
