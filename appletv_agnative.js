@@ -888,13 +888,8 @@
     var heroItems = [];
     var heroCurrentItem = null;
     var heroIdleTimer = null;
-    var heroTrailerActive = false;
     var heroTrailerCache = {};
     var heroTrailerPending = {};
-    var heroYtPlayer = null;
-    var heroUnplayable = {};
-    var ytApiState = 'none';
-    var ytApiCallbacks = [];
     var storageListenerBound = false;
     var activityListenerBound = false;
     var fullListenerBound = false;
@@ -1706,7 +1701,6 @@
     function removeHeroBanner() {
       stopHeroRotation();
       if (heroIdleTimer) { clearTimeout(heroIdleTimer); heroIdleTimer = null; }
-      heroTrailerActive = false;
       var hero = document.querySelector('.agnative-hero');
       if (hero) hero.remove();
       heroItems = [];
@@ -1907,7 +1901,7 @@
         },
         left: function () {
           // Browse hero items leftwards; at the first item hand off to the left menu.
-          stopHeroTrailer();
+          heroClearIdle();
           if (heroItems.length > 1 && heroCurrentIndex > 0) {
             transitionHeroToIndex(heroCurrentIndex - 1);
             startHeroRotation();
@@ -1920,7 +1914,7 @@
         },
         right: function () {
           // Browse hero items rightwards; stop at the last item.
-          stopHeroTrailer();
+          heroClearIdle();
           if (heroItems.length > 1 && heroCurrentIndex < heroItems.length - 1) {
             transitionHeroToIndex(heroCurrentIndex + 1);
             startHeroRotation();
@@ -1949,7 +1943,6 @@
       if (idx === heroCurrentIndex) return;
       var hero = document.querySelector('.agnative-hero');
       if (!hero) return;
-      if (heroTrailerActive) stopHeroTrailer();
       if (heroTransitionTimer) { clearTimeout(heroTransitionTimer); heroTransitionTimer = null; }
       heroCurrentIndex = idx;
       heroResetIdle();
@@ -1985,46 +1978,8 @@
       return !!(btn && (btn.classList.contains('focus') || btn.classList.contains('hover')));
     }
 
-    function stopHeroTrailer() {
-      var hero = document.querySelector('.agnative-hero');
-      var wasActive = heroTrailerActive;
-      heroTrailerActive = false;
-      if (heroYtPlayer) {
-        try { heroYtPlayer.destroy(); } catch (e) { }
-        heroYtPlayer = null;
-      }
-      if (hero) {
-        hero.classList.remove('agnative-hero--trailer');
-        var wrap = hero.querySelector('.agnative-hero__trailer');
-        if (wrap) { wrap.innerHTML = ''; wrap.remove(); }
-      }
-      // Resume the slide rotation that was paused while the trailer played.
-      if (wasActive && hero && heroItems.length > 1) startHeroRotation();
-    }
-
-    function ensureYoutubeApi(cb) {
-      if (window.YT && window.YT.Player) { cb(); return; }
-      ytApiCallbacks.push(cb);
-      if (ytApiState === 'loading') return;
-      ytApiState = 'loading';
-      var prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = function () {
-        if (typeof prev === 'function') { try { prev(); } catch (e) { } }
-        ytApiState = 'ready';
-        var cbs = ytApiCallbacks.slice();
-        ytApiCallbacks = [];
-        for (var i = 0; i < cbs.length; i++) { try { cbs[i](); } catch (e) { } }
-      };
-      try {
-        var tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        (document.head || document.body).appendChild(tag);
-      } catch (e) { ytApiState = 'none'; }
-    }
-
     function heroClearIdle() {
       if (heroIdleTimer) { clearTimeout(heroIdleTimer); heroIdleTimer = null; }
-      stopHeroTrailer();
     }
 
     function heroResetIdle() {
@@ -2034,38 +1989,16 @@
       if (lvl === 'low' || lvl === 'ultra') return;
       if (!heroPlayFocused()) return;
       if (isUiLayerOpen()) return;
+      var item = heroCurrentItem;
+      if (item && item.__heroTrailerAutoPlayed) return; // auto-play at most once per slide
       heroIdleTimer = setTimeout(heroStartTrailer, getHeroTrailerDelayMs());
     }
 
-    // Validity check after any async step: trailer still wanted, same item, hero present.
-    function heroValid(reqId) {
-      return heroTrailerActive && heroPlayFocused() &&
-        heroCurrentItem && heroCurrentItem.id === reqId &&
-        !!document.querySelector('.agnative-hero');
-    }
-
-    function heroEnsureTrailerWrap() {
-      var hero = document.querySelector('.agnative-hero');
-      if (!hero) return null;
-      var wrap = hero.querySelector('.agnative-hero__trailer');
-      if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.className = 'agnative-hero__trailer';
-        var bgEl = hero.querySelector('.agnative-hero__bg');
-        if (bgEl && bgEl.nextSibling) hero.insertBefore(wrap, bgEl.nextSibling);
-        else hero.appendChild(wrap);
-      }
-      wrap.innerHTML = '';
-      return wrap;
-    }
-
-    function heroRevealTrailer() {
-      var h = document.querySelector('.agnative-hero');
-      if (h && heroTrailerActive) h.classList.add('agnative-hero--trailer');
-    }
-
+    // Launch the trailer through Lampa's native player (fullscreen) on idle.
+    // The native client resolves YouTube itself, so this works on Apple TV /
+    // Android TV — unlike an inline browser-only iframe.
     function heroStartTrailer() {
-      if (!heroTrailerEnabled() || !heroPlayFocused()) return;
+      if (!heroTrailerEnabled() || !heroPlayFocused() || isUiLayerOpen()) return;
       var item = heroCurrentItem;
       if (!item || !item.id) return;
       if (!document.querySelector('.agnative-hero')) return;
@@ -2073,69 +2006,26 @@
       var reqId = item.id;
       var type = detectHeroItemType(item);
 
-      heroTrailerActive = true;
-      stopHeroRotation();
-
       fetchHeroTrailer(item.id, type, function (key) {
-        if (!heroValid(reqId)) { stopHeroTrailer(); return; }
-        if (!key || heroUnplayable[key]) { stopHeroTrailer(); return; }
+        if (!key) return;
+        // Re-validate after the async fetch: still idle-focused on the same slide.
+        if (!heroPlayFocused() || isUiLayerOpen()) return;
+        if (!heroCurrentItem || heroCurrentItem.id !== reqId) return;
+        if (!document.querySelector('.agnative-hero')) return;
+        if (!window.Lampa || !Lampa.Player || !Lampa.Player.play) return;
 
-        var wrap = heroEnsureTrailerWrap();
-        if (!wrap) { stopHeroTrailer(); return; }
-        var holder = document.createElement('div');
-        wrap.appendChild(holder);
+        item.__heroTrailerAutoPlayed = true;
 
-        // Safety net: if playback never actually starts (e.g. YouTube embed is
-        // blocked/unsupported on the device — Apple TV WebKit, region blocks, no
-        // autoplay), cancel cleanly so the slide rotation resumes instead of
-        // freezing on one slide forever.
-        var settled = false;
-        var guard = setTimeout(function () {
-          if (settled) return;
-          var h = document.querySelector('.agnative-hero');
-          if (!h || !h.classList.contains('agnative-hero--trailer')) {
-            settled = true;
-            stopHeroTrailer();
-          }
-        }, 7000);
-
-        ensureYoutubeApi(function () {
-          if (!heroValid(reqId) || !holder.parentNode) { clearTimeout(guard); stopHeroTrailer(); return; }
-          if (!window.YT || !window.YT.Player) { clearTimeout(guard); stopHeroTrailer(); return; }
-          try {
-            heroYtPlayer = new window.YT.Player(holder, {
-              videoId: key,
-              host: 'https://www.youtube-nocookie.com',
-              playerVars: {
-                autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0,
-                modestbranding: 1, rel: 0, playsinline: 1, loop: 1, playlist: key,
-                iv_load_policy: 3, origin: location.origin
-              },
-              events: {
-                onReady: function (e) { try { e.target.mute(); e.target.playVideo(); } catch (_) { } },
-                onError: function () {
-                  // Embedding disabled / unavailable — hide silently, never retry this key.
-                  heroUnplayable[key] = true;
-                  settled = true;
-                  clearTimeout(guard);
-                  stopHeroTrailer();
-                },
-                onStateChange: function (e) {
-                  if (e && e.data === 1) {            // playing — reveal now
-                    settled = true;
-                    clearTimeout(guard);
-                    heroRevealTrailer();
-                  } else if (e && e.data === 0) {     // ended — loop
-                    try { e.target.playVideo(); } catch (_) { }
-                  }
-                }
-              }
-            });
-          } catch (e) {
-            clearTimeout(guard);
-            stopHeroTrailer();
-          }
-        });
+        var ytItem = {
+          title: item.title || item.name || '',
+          id: key,
+          url: 'https://www.youtube.com/watch?v=' + key,
+          youtube: true
+        };
+        try {
+          Lampa.Player.play(ytItem);
+          if (Lampa.Player.playlist) Lampa.Player.playlist([ytItem]);
+        } catch (e) { }
       });
     }
 
@@ -4805,10 +4695,6 @@
         '@keyframes agnative-hero-drift { from { transform: scale(1.08) translate3d(-2%, -1.5%, 0); } to { transform: scale(1.08) translate3d(2%, 1.5%, 0); } }',
         '@keyframes agnative-hero-breathe { 0% { transform: scale(1) translate3d(0,0,0); } 50% { transform: scale(1.04) translate3d(0,0,0); } 100% { transform: scale(1) translate3d(0,0,0); } }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--hidden .agnative-hero__bg { opacity:0; }',
-        'body.' + BODY_CLASS + ' .agnative-hero__trailer { position:absolute; top:0; left:0; right:0; bottom:0; overflow:hidden; border-radius:1.5em; opacity:0; transition:opacity .6s ease; pointer-events:none; }',
-        'body.' + BODY_CLASS + ' .agnative-hero--trailer .agnative-hero__trailer { opacity:1; }',
-        'body.' + BODY_CLASS + ' .agnative-hero__trailer iframe { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100vw; height:56.25vw; min-width:100%; min-height:100%; border:0; pointer-events:none; }',
-        'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--hidden .agnative-hero__trailer { opacity:0; }',
         'body.' + BODY_CLASS + ' .activity--active .items-line, body.' + BODY_CLASS + ' .activity--active .scroll__content { position:relative; z-index:10; }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
         'body.' + BODY_CLASS + ' .agnative-hero::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.30) 28%, rgba(0,0,0,.05) 55%, transparent 78%); pointer-events:none; z-index:1; border-radius:1.5em; }',
