@@ -90,6 +90,10 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
   var heroTrailerCache = {};
   var heroTrailerPending = {};
   var heroTrailerActive = false;
+  var heroYtPlayer = null;
+  var heroUnplayable = {};
+  var ytApiState = 'none';
+  var ytApiCallbacks = [];
   var storageListenerBound = false;
   var activityListenerBound = false;
   var fullListenerBound = false;
@@ -1210,6 +1214,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     var hero = document.querySelector('.agnative-hero');
     var wasActive = heroTrailerActive;
     heroTrailerActive = false;
+    if (heroYtPlayer) { try { heroYtPlayer.destroy(); } catch (e) { } heroYtPlayer = null; }
     if (hero) {
       hero.classList.remove('agnative-hero--trailer');
       var wrap = hero.querySelector('.agnative-hero__trailer');
@@ -1217,6 +1222,26 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     }
     // Resume the slide rotation that was paused while the trailer played.
     if (wasActive && hero && heroItems.length > 1) startHeroRotation();
+  }
+
+  function ensureYoutubeApi(cb) {
+    if (window.YT && window.YT.Player) { cb(); return; }
+    ytApiCallbacks.push(cb);
+    if (ytApiState === 'loading') return;
+    ytApiState = 'loading';
+    var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () {
+      if (typeof prev === 'function') { try { prev(); } catch (e) { } }
+      ytApiState = 'ready';
+      var cbs = ytApiCallbacks.slice();
+      ytApiCallbacks = [];
+      for (var i = 0; i < cbs.length; i++) { try { cbs[i](); } catch (e) { } }
+    };
+    try {
+      var tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      (document.head || document.body).appendChild(tag);
+    } catch (e) { ytApiState = 'none'; }
   }
 
   function heroClearIdle() {
@@ -1234,8 +1259,17 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     heroIdleTimer = setTimeout(heroStartTrailer, getHeroTrailerDelayMs());
   }
 
-  // Inline ("windowed") trailer using a plain YouTube embed iframe — the method
-  // that actually works in the Lampa webview on Apple TV / Android TV.
+  function heroTrailerEmbedUrl(key) {
+    return 'https://www.youtube.com/embed/' + key +
+      '?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=' + key +
+      '&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0';
+  }
+
+  // Inline ("windowed") trailer. Primary path is the YouTube IFrame Player API
+  // (reliable muted autoplay on desktop). If the API script can't load — e.g.
+  // it's blocked in the Apple TV webview — fall back to a plain embed iframe
+  // (which is what works there). The element is revealed immediately because
+  // browsers block muted autoplay inside an invisible (opacity:0) iframe.
   function heroStartTrailer() {
     if (!heroTrailerEnabled() || !heroPlayFocused() || isUiLayerOpen()) return;
     var item = heroCurrentItem;
@@ -1249,25 +1283,58 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload } from './tmdb/p
     stopHeroRotation();
 
     fetchHeroTrailer(item.id, type, function (key) {
-      if (!key) { stopHeroTrailer(); return; }
+      if (!key || heroUnplayable[key]) { stopHeroTrailer(); return; }
       if (!heroValid(reqId)) { stopHeroTrailer(); return; }
 
       var wrap = heroEnsureTrailerWrap();
       if (!wrap) { stopHeroTrailer(); return; }
-
-      var iframe = document.createElement('iframe');
-      iframe.setAttribute('frameborder', '0');
-      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-      iframe.allowFullscreen = false;
-      iframe.src = 'https://www.youtube.com/embed/' + key +
-        '?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=' + key +
-        '&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0';
-      wrap.appendChild(iframe);
-
-      // Reveal immediately: browsers block muted autoplay in an invisible
-      // (opacity:0) iframe, so the element must be visible before YouTube's
-      // player attempts to start. The CSS opacity transition still fades it in.
       heroRevealTrailer();
+
+      var done = false;
+      function plainEmbed() {
+        if (done) return;
+        done = true;
+        if (!heroValid(reqId)) { stopHeroTrailer(); return; }
+        var w = heroEnsureTrailerWrap();
+        if (!w) { stopHeroTrailer(); return; }
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+        iframe.allowFullscreen = false;
+        iframe.src = heroTrailerEmbedUrl(key);
+        w.appendChild(iframe);
+        heroRevealTrailer();
+      }
+
+      var holder = document.createElement('div');
+      wrap.appendChild(holder);
+
+      // If the IFrame API doesn't come up shortly (blocked on the device),
+      // switch to a plain embed iframe instead.
+      var apiTimer = setTimeout(function () { if (!window.YT || !window.YT.Player) plainEmbed(); }, 3500);
+
+      ensureYoutubeApi(function () {
+        if (done) return;
+        if (!heroValid(reqId)) { clearTimeout(apiTimer); stopHeroTrailer(); return; }
+        if (!window.YT || !window.YT.Player) return; // apiTimer will fall back
+        clearTimeout(apiTimer);
+        done = true;
+        try {
+          heroYtPlayer = new window.YT.Player(holder, {
+            videoId: key,
+            host: 'https://www.youtube.com',
+            playerVars: {
+              autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0,
+              modestbranding: 1, rel: 0, playsinline: 1, loop: 1, playlist: key,
+              iv_load_policy: 3, origin: location.origin
+            },
+            events: {
+              onReady: function (e) { try { e.target.mute(); e.target.playVideo(); } catch (_) { } },
+              onError: function () { heroUnplayable[key] = true; }
+            }
+          });
+        } catch (e) { plainEmbed(); }
+      });
     });
   }
 
