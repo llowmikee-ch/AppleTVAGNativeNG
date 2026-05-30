@@ -890,6 +890,10 @@
     var heroIdleTimer = null;
     var heroTrailerCache = {};
     var heroTrailerPending = {};
+    var heroTrailerActive = false;
+    var heroUnplayable = {};
+    var heroBridgeId = null;
+    var heroMsgHandler = null;
     var storageListenerBound = false;
     var activityListenerBound = false;
     var fullListenerBound = false;
@@ -1701,6 +1705,9 @@
     function removeHeroBanner() {
       stopHeroRotation();
       if (heroIdleTimer) { clearTimeout(heroIdleTimer); heroIdleTimer = null; }
+      if (heroMsgHandler) { try { window.removeEventListener('message', heroMsgHandler); } catch (e) { } heroMsgHandler = null; }
+      heroTrailerActive = false;
+      heroBridgeId = null;
       var hero = document.querySelector('.agnative-hero');
       if (hero) hero.remove();
       heroItems = [];
@@ -1943,6 +1950,7 @@
       if (idx === heroCurrentIndex) return;
       var hero = document.querySelector('.agnative-hero');
       if (!hero) return;
+      if (heroTrailerActive) stopHeroTrailer();
       if (heroTransitionTimer) { clearTimeout(heroTransitionTimer); heroTransitionTimer = null; }
       heroCurrentIndex = idx;
       heroResetIdle();
@@ -1978,8 +1986,71 @@
       return !!(btn && (btn.classList.contains('focus') || btn.classList.contains('hover')));
     }
 
+    // Reuse Lampa's own same-origin youtube.html bridge (it hosts the YouTube
+    // IFrame API and reports state via postMessage). Resolved relative to the
+    // app so it works in the native webview (Apple TV / Android TV) where a
+    // direct youtube.com iframe in the main document is blocked.
+    function lampaYoutubeBridgeUrl(id, bridgeId) {
+      var q = 'youtube.html?bridgeId=' + encodeURIComponent(bridgeId) +
+              '&videoId=' + encodeURIComponent(id) + '&autoplay=1&mute=1&controls=0';
+      try {
+        var origin = location.origin;
+        if (origin && origin !== 'null') {
+          var dir = location.pathname.replace(/\/[^/]*$/, '/');
+          if (dir.charAt(0) !== '/') dir = '/' + dir;
+          return origin + dir + q;
+        }
+      } catch (e) { }
+      return q; // relative fallback (file://)
+    }
+
+    function heroValid(reqId) {
+      return heroTrailerActive && heroPlayFocused() &&
+        heroCurrentItem && heroCurrentItem.id === reqId &&
+        !!document.querySelector('.agnative-hero');
+    }
+
+    function heroEnsureTrailerWrap() {
+      var hero = document.querySelector('.agnative-hero');
+      if (!hero) return null;
+      var wrap = hero.querySelector('.agnative-hero__trailer');
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.className = 'agnative-hero__trailer';
+        var bgEl = hero.querySelector('.agnative-hero__bg');
+        if (bgEl && bgEl.nextSibling) hero.insertBefore(wrap, bgEl.nextSibling);
+        else hero.appendChild(wrap);
+      }
+      wrap.innerHTML = '';
+      return wrap;
+    }
+
+    function heroRevealTrailer() {
+      var h = document.querySelector('.agnative-hero');
+      if (h && heroTrailerActive) h.classList.add('agnative-hero--trailer');
+    }
+
+    function stopHeroTrailer() {
+      var hero = document.querySelector('.agnative-hero');
+      var wasActive = heroTrailerActive;
+      heroTrailerActive = false;
+      heroBridgeId = null;
+      if (heroMsgHandler) {
+        try { window.removeEventListener('message', heroMsgHandler); } catch (e) { }
+        heroMsgHandler = null;
+      }
+      if (hero) {
+        hero.classList.remove('agnative-hero--trailer');
+        var wrap = hero.querySelector('.agnative-hero__trailer');
+        if (wrap) { wrap.innerHTML = ''; wrap.remove(); }
+      }
+      // Resume the slide rotation that was paused while the trailer played.
+      if (wasActive && hero && heroItems.length > 1) startHeroRotation();
+    }
+
     function heroClearIdle() {
       if (heroIdleTimer) { clearTimeout(heroIdleTimer); heroIdleTimer = null; }
+      stopHeroTrailer();
     }
 
     function heroResetIdle() {
@@ -1989,14 +2060,9 @@
       if (lvl === 'low' || lvl === 'ultra') return;
       if (!heroPlayFocused()) return;
       if (isUiLayerOpen()) return;
-      var item = heroCurrentItem;
-      if (item && item.__heroTrailerAutoPlayed) return; // auto-play at most once per slide
       heroIdleTimer = setTimeout(heroStartTrailer, getHeroTrailerDelayMs());
     }
 
-    // Launch the trailer through Lampa's native player (fullscreen) on idle.
-    // The native client resolves YouTube itself, so this works on Apple TV /
-    // Android TV — unlike an inline browser-only iframe.
     function heroStartTrailer() {
       if (!heroTrailerEnabled() || !heroPlayFocused() || isUiLayerOpen()) return;
       var item = heroCurrentItem;
@@ -2006,26 +2072,65 @@
       var reqId = item.id;
       var type = detectHeroItemType(item);
 
+      heroTrailerActive = true;
+      stopHeroRotation();
+
       fetchHeroTrailer(item.id, type, function (key) {
-        if (!key) return;
-        // Re-validate after the async fetch: still idle-focused on the same slide.
-        if (!heroPlayFocused() || isUiLayerOpen()) return;
-        if (!heroCurrentItem || heroCurrentItem.id !== reqId) return;
-        if (!document.querySelector('.agnative-hero')) return;
-        if (!window.Lampa || !Lampa.Player || !Lampa.Player.play) return;
+        if (!key || heroUnplayable[key]) { stopHeroTrailer(); return; }
+        if (!heroValid(reqId)) { stopHeroTrailer(); return; }
 
-        item.__heroTrailerAutoPlayed = true;
+        var wrap = heroEnsureTrailerWrap();
+        if (!wrap) { stopHeroTrailer(); return; }
 
-        var ytItem = {
-          title: item.title || item.name || '',
-          id: key,
-          url: 'https://www.youtube.com/watch?v=' + key,
-          youtube: true
+        var bridgeId = 'agnative_' + reqId + '_' + Date.now();
+        heroBridgeId = bridgeId;
+
+        var settled = false;
+        var guard = setTimeout(function () {
+          // Nothing reported back / never loaded — give up cleanly so rotation resumes.
+          if (!settled) stopHeroTrailer();
+        }, 10000);
+
+        function revealOnce() {
+          if (settled) return;
+          settled = true;
+          clearTimeout(guard);
+          if (heroValid(reqId)) heroRevealTrailer();
+          else stopHeroTrailer();
+        }
+
+        var iframe = document.createElement('iframe');
+
+        heroMsgHandler = function (ev) {
+          var d = ev && ev.data;
+          if (!d || d.bridgeId !== bridgeId) return;
+          if (d.type === 'error') {
+            heroUnplayable[key] = true;
+            settled = true;
+            clearTimeout(guard);
+            stopHeroTrailer();
+            return;
+          }
+          var state;
+          if (d.type === 'stateChange') state = (typeof d.data === 'number') ? d.data : (d.data && d.data.state);
+          else if (d.type === 'time') state = d.data && d.data.playerState;
+          if (state === 1) revealOnce();                 // playing
+          else if (state === 0) {                         // ended — loop
+            try { iframe.contentWindow.location.reload(); }
+            catch (e) { try { iframe.src = lampaYoutubeBridgeUrl(key, bridgeId); } catch (_) { } }
+          }
         };
-        try {
-          Lampa.Player.play(ytItem);
-          if (Lampa.Player.playlist) Lampa.Player.playlist([ytItem]);
-        } catch (e) { }
+        window.addEventListener('message', heroMsgHandler);
+
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'autoplay; encrypted-media');
+        iframe.allowFullscreen = false;
+        iframe.addEventListener('load', function () {
+          // Backup reveal in case state messages don't arrive/parse on this device.
+          setTimeout(function () { if (!settled && heroValid(reqId)) revealOnce(); }, 2500);
+        });
+        iframe.src = lampaYoutubeBridgeUrl(key, bridgeId);
+        wrap.appendChild(iframe);
       });
     }
 
@@ -4695,6 +4800,10 @@
         '@keyframes agnative-hero-drift { from { transform: scale(1.08) translate3d(-2%, -1.5%, 0); } to { transform: scale(1.08) translate3d(2%, 1.5%, 0); } }',
         '@keyframes agnative-hero-breathe { 0% { transform: scale(1) translate3d(0,0,0); } 50% { transform: scale(1.04) translate3d(0,0,0); } 100% { transform: scale(1) translate3d(0,0,0); } }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--hidden .agnative-hero__bg { opacity:0; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__trailer { position:absolute; top:0; left:0; right:0; bottom:0; overflow:hidden; border-radius:1.5em; opacity:0; transition:opacity .6s ease; pointer-events:none; }',
+        'body.' + BODY_CLASS + ' .agnative-hero--trailer .agnative-hero__trailer { opacity:1; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__trailer iframe { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100vw; height:56.25vw; min-width:100%; min-height:100%; border:0; pointer-events:none; }',
+        'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--hidden .agnative-hero__trailer { opacity:0; }',
         'body.' + BODY_CLASS + ' .activity--active .items-line, body.' + BODY_CLASS + ' .activity--active .scroll__content { position:relative; z-index:10; }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
         'body.' + BODY_CLASS + ' .agnative-hero::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.30) 28%, rgba(0,0,0,.05) 55%, transparent 78%); pointer-events:none; z-index:1; border-radius:1.5em; }',
