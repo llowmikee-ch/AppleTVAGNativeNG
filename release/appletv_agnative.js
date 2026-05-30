@@ -2085,9 +2085,23 @@
         var holder = document.createElement('div');
         wrap.appendChild(holder);
 
+        // Safety net: if playback never actually starts (e.g. YouTube embed is
+        // blocked/unsupported on the device — Apple TV WebKit, region blocks, no
+        // autoplay), cancel cleanly so the slide rotation resumes instead of
+        // freezing on one slide forever.
+        var settled = false;
+        var guard = setTimeout(function () {
+          if (settled) return;
+          var h = document.querySelector('.agnative-hero');
+          if (!h || !h.classList.contains('agnative-hero--trailer')) {
+            settled = true;
+            stopHeroTrailer();
+          }
+        }, 7000);
+
         ensureYoutubeApi(function () {
-          if (!heroValid(reqId) || !holder.parentNode) { stopHeroTrailer(); return; }
-          if (!window.YT || !window.YT.Player) { stopHeroTrailer(); return; }
+          if (!heroValid(reqId) || !holder.parentNode) { clearTimeout(guard); stopHeroTrailer(); return; }
+          if (!window.YT || !window.YT.Player) { clearTimeout(guard); stopHeroTrailer(); return; }
           try {
             heroYtPlayer = new window.YT.Player(holder, {
               videoId: key,
@@ -2102,10 +2116,14 @@
                 onError: function () {
                   // Embedding disabled / unavailable — hide silently, never retry this key.
                   heroUnplayable[key] = true;
+                  settled = true;
+                  clearTimeout(guard);
                   stopHeroTrailer();
                 },
                 onStateChange: function (e) {
                   if (e && e.data === 1) {            // playing — reveal now
+                    settled = true;
+                    clearTimeout(guard);
                     heroRevealTrailer();
                   } else if (e && e.data === 0) {     // ended — loop
                     try { e.target.playVideo(); } catch (_) { }
@@ -2114,6 +2132,7 @@
               }
             });
           } catch (e) {
+            clearTimeout(guard);
             stopHeroTrailer();
           }
         });
