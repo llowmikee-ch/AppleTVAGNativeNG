@@ -2056,28 +2056,19 @@
         var wrap = heroEnsureTrailerWrap();
         if (!wrap) { stopHeroTrailer(); return; }
 
-        var settled = false;
-        // Safety net: if the embed never loads, resume slide rotation.
-        var guard = setTimeout(function () { if (!settled) stopHeroTrailer(); }, 12000);
-
         var iframe = document.createElement('iframe');
         iframe.setAttribute('frameborder', '0');
         iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
         iframe.allowFullscreen = false;
-        iframe.addEventListener('load', function () {
-          // Reveal a moment after the embed loads (no JS-API handshake needed).
-          setTimeout(function () {
-            if (settled) return;
-            settled = true;
-            clearTimeout(guard);
-            if (heroValid(reqId)) heroRevealTrailer();
-            else stopHeroTrailer();
-          }, 900);
-        });
         iframe.src = 'https://www.youtube.com/embed/' + key +
           '?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=' + key +
           '&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0';
         wrap.appendChild(iframe);
+
+        // Reveal immediately: browsers block muted autoplay in an invisible
+        // (opacity:0) iframe, so the element must be visible before YouTube's
+        // player attempts to start. The CSS opacity transition still fades it in.
+        heroRevealTrailer();
       });
     }
 
