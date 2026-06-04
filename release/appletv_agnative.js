@@ -1033,6 +1033,7 @@
     var titledBackdropPending = {};
     var heroRotationTimer = null;
     var heroExitDirection = null;
+    var heroAutoFocusedSession = false;
     var heroCurrentIndex = 0;
     var heroItems = [];
     var heroCurrentItem = null;
@@ -2853,7 +2854,13 @@
         renderHeroSlide(heroItems[0]);
         startHeroRotation();
         ensureHeroController();
-        if (!isUiLayerOpen()) setTimeout(focusHeroPlayButton, 100);
+        // Only auto-focus the hero on the first build of the session. On rebuilds
+        // after returning (back) from a movie, leave focus to Lampa so it restores
+        // the card the user was on instead of stealing it to the hero.
+        if (!heroAutoFocusedSession && !isUiLayerOpen()) {
+          heroAutoFocusedSession = true;
+          setTimeout(focusHeroPlayButton, 100);
+        }
         if (heroTrailerEnabled() && !heroVideoCooldown) {
           scheduleHeroPrefetch(heroItems.slice());
         }
