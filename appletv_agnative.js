@@ -65,7 +65,9 @@
     HERO_BG_ANIM_KEY: 'appletv_agnative_hero_bg_anim',
     HERO_QUALITY_KEY: 'appletv_agnative_hero_quality',
     HERO_TRAILER_KEY: 'appletv_agnative_hero_trailer',
+    HERO_TRAILER_MODE_KEY: 'appletv_agnative_hero_trailer_mode',
     HERO_TRAILER_DELAY_KEY: 'appletv_agnative_hero_trailer_delay',
+    HERO_TRAILER_QUALITY_KEY: 'appletv_agnative_hero_trailer_quality',
     TOPNAV_ENABLE_KEY: 'appletv_agnative_topnav_visible',
     TOPNAV_ICONS_ORDER_KEY: 'appletv_agnative_topnav_icons_order',
     TOPNAV_SIZE_KEY: 'appletv_agnative_topnav_size',
@@ -178,8 +180,15 @@
     set_hero_quality_desc: 'Разрешение фоновой картинки баннера',
     set_hero_trailer_name: 'Трейлер при простое',
     set_hero_trailer_desc: 'Через паузу без действий в баннере проигрывается трейлер (без звука)',
+    set_hero_trailer_mode_name: 'Режим баннера',
+    set_hero_trailer_mode_desc: 'Показывать ли трейлер поверх постера после простоя',
+    val_trailer_mode_posters: 'Только постеры',
+    val_trailer_mode_mixed: 'Постеры + трейлер после простоя',
+    val_trailer_mode_trailers: 'Только трейлеры',
     set_hero_trailer_delay_name: 'Задержка трейлера',
     set_hero_trailer_delay_desc: 'Сколько ждать бездействия перед запуском трейлера',
+    set_hero_trailer_quality_name: 'Качество трейлера',
+    set_hero_trailer_quality_desc: 'Разрешение трейлеров в баннере',
     val_sec_short: 'сек',
     hero_btn_watch: 'Смотреть',
     set_section_beta: 'Beta - функции',
@@ -303,8 +312,15 @@
     set_hero_quality_desc: 'Banner backdrop image resolution',
     set_hero_trailer_name: 'Trailer on idle',
     set_hero_trailer_desc: 'After a pause with no input, the banner plays the trailer (muted)',
+    set_hero_trailer_mode_name: 'Banner mode',
+    set_hero_trailer_mode_desc: 'Whether to play a trailer over the poster after idle',
+    val_trailer_mode_posters: 'Posters only',
+    val_trailer_mode_mixed: 'Posters + trailer after idle',
+    val_trailer_mode_trailers: 'Trailers only',
     set_hero_trailer_delay_name: 'Trailer delay',
     set_hero_trailer_delay_desc: 'How long to wait while idle before starting the trailer',
+    set_hero_trailer_quality_name: 'Trailer quality',
+    set_hero_trailer_quality_desc: 'Resolution of trailers played in the banner',
     val_sec_short: 'sec',
     hero_btn_watch: 'Watch',
     set_section_beta: 'Beta features',
@@ -428,8 +444,15 @@
     set_hero_quality_desc: 'Роздільна здатність фонової картинки банера',
     set_hero_trailer_name: 'Трейлер при простої',
     set_hero_trailer_desc: 'Після паузи без дій у банері відтворюється трейлер (без звуку)',
+    set_hero_trailer_mode_name: 'Режим банера',
+    set_hero_trailer_mode_desc: 'Чи показувати трейлер поверх постера після простою',
+    val_trailer_mode_posters: 'Лише постери',
+    val_trailer_mode_mixed: 'Постери + трейлер після простою',
+    val_trailer_mode_trailers: 'Тільки трейлери',
     set_hero_trailer_delay_name: 'Затримка трейлера',
     set_hero_trailer_delay_desc: 'Скільки чекати бездіяльності перед запуском трейлера',
+    set_hero_trailer_quality_name: 'Якість трейлера',
+    set_hero_trailer_quality_desc: 'Роздільна здатність трейлерів у банері',
     val_sec_short: 'сек',
     hero_btn_watch: 'Дивитися',
     set_section_beta: 'Beta - функції',
@@ -553,8 +576,15 @@
     set_hero_quality_desc: 'Раздзяляльная здольнасць фонавай карцінкі банера',
     set_hero_trailer_name: 'Трэйлер пры прастоі',
     set_hero_trailer_desc: 'Пасля паўзы без дзеянняў у банеры прайграецца трэйлер (без гуку)',
+    set_hero_trailer_mode_name: 'Рэжым банера',
+    set_hero_trailer_mode_desc: 'Ці паказваць трэйлер па-над постэрам пасля прастою',
+    val_trailer_mode_posters: 'Толькі постэры',
+    val_trailer_mode_mixed: 'Постэры + трэйлер пасля прастою',
+    val_trailer_mode_trailers: 'Толькі трэйлеры',
     set_hero_trailer_delay_name: 'Затрымка трэйлера',
     set_hero_trailer_delay_desc: 'Колькі чакаць бяздзейнасці перад запускам трэйлера',
+    set_hero_trailer_quality_name: 'Якасць трэйлера',
+    set_hero_trailer_quality_desc: 'Раздзяляльная здольнасць трэйлераў у банеры',
     val_sec_short: 'сек',
     hero_btn_watch: 'Глядзець',
     set_section_beta: 'Beta - функцыі',
@@ -634,10 +664,12 @@
   }
 
   var DB_NAME = 'agnative-cache';
-  var DB_VERSION = 1;
+  var DB_VERSION = 2;
   var STORE_META = 'meta';
   var STORE_IMG = 'img';
+  var STORE_VIDEO = 'video';
   var FAILED_TTL = 24 * 60 * 60 * 1000;
+  var VIDEO_FAILED_TTL = 6 * 60 * 60 * 1000;
 
   var _db = null;
   var _dbQueue = [];
@@ -655,6 +687,7 @@
         var db = e.target.result;
         if (!db.objectStoreNames.contains(STORE_META)) db.createObjectStore(STORE_META, { keyPath: 'key' });
         if (!db.objectStoreNames.contains(STORE_IMG)) db.createObjectStore(STORE_IMG, { keyPath: 'key' });
+        if (!db.objectStoreNames.contains(STORE_VIDEO)) db.createObjectStore(STORE_VIDEO, { keyPath: 'key' });
       };
       req.onsuccess = function (e) {
         _db = e.target.result;
@@ -754,9 +787,12 @@
     openDB(function (db) {
       if (!db) return;
       try {
-        var tx = db.transaction([STORE_META, STORE_IMG], 'readwrite');
+        var stores = [STORE_META, STORE_IMG];
+        if (db.objectStoreNames.contains(STORE_VIDEO)) stores.push(STORE_VIDEO);
+        var tx = db.transaction(stores, 'readwrite');
         tx.objectStore(STORE_META).clear();
         tx.objectStore(STORE_IMG).clear();
+        if (db.objectStoreNames.contains(STORE_VIDEO)) tx.objectStore(STORE_VIDEO).clear();
       } catch (e) {}
     });
   }
@@ -826,6 +862,95 @@
     });
   }
 
+  var _videoTried = {};
+  var _videoUrlMap = {};
+
+  function getVideoEntry(key, callback) {
+    openDB(function (db) {
+      if (!db || !db.objectStoreNames.contains(STORE_VIDEO)) { callback(null); return; }
+      try {
+        var req = db.transaction(STORE_VIDEO, 'readonly').objectStore(STORE_VIDEO).get(key);
+        req.onsuccess = function () {
+          var entry = req.result;
+          if (!entry) { callback(null); return; }
+          if (entry.failed && Date.now() - entry.t > VIDEO_FAILED_TTL) { callback(null); return; }
+          callback(entry);
+        };
+        req.onerror = function () { callback(null); };
+      } catch (e) { callback(null); }
+    });
+  }
+
+  function attemptStoreVideo(url, key, onDone) {
+    if (_videoTried[key]) { if (onDone) onDone(false); return; }
+    _videoTried[key] = true;
+    try {
+      if (typeof fetch !== 'function') { if (onDone) onDone(false); return; }
+      fetch(url, { mode: 'cors', credentials: 'omit' }).then(function (r) {
+        try {
+          if (!r.ok) {
+            idbSet(STORE_VIDEO, key, null, { s: 0, failed: true });
+            if (onDone) onDone(false);
+            return;
+          }
+          r.blob().then(function (b) {
+            try { idbSet(STORE_VIDEO, key, b, { s: b.size }); } catch (e) {}
+            if (onDone) onDone(true);
+          }, function () {
+            if (onDone) onDone(false);
+          });
+        } catch (e) {
+          if (onDone) onDone(false);
+        }
+      }, function () {
+        try { idbSet(STORE_VIDEO, key, null, { s: 0, failed: true }); } catch (e) {}
+        if (onDone) onDone(false);
+      });
+    } catch (e) {
+      if (onDone) onDone(false);
+    }
+  }
+
+  function videoLoad(url, callback) {
+    var key = url;
+    getVideoEntry(key, function (entry) {
+      if (entry && entry.v) {
+        try {
+          var obj = URL.createObjectURL(entry.v);
+          _videoUrlMap[key] = obj;
+          callback(obj, true);
+          return;
+        } catch (e) {}
+      }
+      callback(url, false);
+      if (entry && entry.failed) {
+        _videoTried[key] = true;
+        return;
+      }
+      attemptStoreVideo(url, key);
+    });
+  }
+
+  function videoPreload(url, onDone) {
+    var key = url;
+    getVideoEntry(key, function (entry) {
+      if (entry && entry.v) { if (onDone) onDone(true); return; }
+      if (entry && entry.failed) { if (onDone) onDone(false); return; }
+      attemptStoreVideo(url, key, onDone);
+    });
+  }
+
+  function videoMarkFailed(url) {
+    idbSet(STORE_VIDEO, url, null, { s: 0, failed: true });
+    _videoTried[url] = true;
+  }
+
+  function videoRevoke(objUrl) {
+    if (typeof objUrl === 'string' && objUrl.indexOf('blob:') === 0) {
+      try { URL.revokeObjectURL(objUrl); } catch (e) {}
+    }
+  }
+
   (function () {
     'use strict';
 
@@ -887,7 +1012,9 @@
       HERO_BG_ANIM_KEY,
       HERO_QUALITY_KEY,
       HERO_TRAILER_KEY,
+      HERO_TRAILER_MODE_KEY,
       HERO_TRAILER_DELAY_KEY,
+      HERO_TRAILER_QUALITY_KEY,
       TOPNAV_ENABLE_KEY,
       TOPNAV_ICONS_ORDER_KEY,
       TOPNAV_SIZE_KEY,
@@ -913,10 +1040,37 @@
     var heroTrailerActive = false;
     var heroTrailerCache = {};
     var heroTrailerPending = {};
-    var heroYtPlayer = null;
+    var heroVideoEl = null;
+    var heroVideoCurrentSrc = '';
+    var heroVideoObjUrl = '';
+    var heroVideoReadyTimer = null;
+    var heroVideoRevealTimer = null;
+    var heroVideoDurationTimer = null;
+    var HERO_TRAILER_START_SEC = 5;
+    var HERO_TRAILER_FAIL_LIMIT = 10;
+    var HERO_COOLDOWN_RESET_MS = 5 * 60 * 1000;
+    var heroCooldownTimer = null;
+    var heroTrailerAttempt = 0;
     var heroUnplayable = {};
-    var ytApiState = 'none';
-    var ytApiCallbacks = [];
+    var heroImdbIdCache = {};
+    var heroImdbIdPending = {};
+    var heroResolvedTrailer = {};
+    var heroVideoNetFailures = 0;
+    var heroVideoCooldown = false;
+    var heroPrefetchQueue = [];
+    var heroPrefetchActive = false;
+    var heroBlobCached = {};
+    var heroRevealAfterTs = 0;
+    var HERO_PROXY_BASE = 'https://kp.pris.cam/';
+    var HERO_IMDB_API_BASE = 'https://api.imdbapi.dev';
+    var HERO_VIDEO_BASE = 'https://imdb-video.media-imdb.com/mc';
+    var HERO_TRAILER_RESOLVED_LS = 'agnative_hero_trailer_resolved';
+
+    function heroProxyUrl(url) {
+      if (!url) return url;
+      if (url.indexOf(HERO_PROXY_BASE) === 0) return url;
+      return HERO_PROXY_BASE + url;
+    }
     var storageListenerBound = false;
     var activityListenerBound = false;
     var fullListenerBound = false;
@@ -1648,12 +1802,30 @@
       } catch (e) { return 40000; }
     }
 
-    function heroTrailerEnabled() {
+    function getHeroTrailerMode() {
       try {
-        if (!window.Lampa || !Lampa.Storage) return true;
-        var v = Lampa.Storage.get(HERO_TRAILER_KEY, 'true');
-        return !(v === false || v === 'false' || v === 'off');
-      } catch (e) { return true; }
+        if (!window.Lampa || !Lampa.Storage) return 'mixed';
+        var v = Lampa.Storage.get(HERO_TRAILER_MODE_KEY, '');
+        if (v === 'posters') return 'posters';
+        if (v === 'trailers') return 'trailers';
+        if (v === 'mixed' || v === 'video') return 'mixed';
+        var legacy = Lampa.Storage.get(HERO_TRAILER_KEY, 'true');
+        if (legacy === false || legacy === 'false' || legacy === 'off') return 'posters';
+        return 'mixed';
+      } catch (e) { return 'mixed'; }
+    }
+
+    function heroTrailerEnabled() {
+      return getHeroTrailerMode() !== 'posters';
+    }
+
+    function getHeroTrailerQuality() {
+      try {
+        if (!window.Lampa || !Lampa.Storage) return '720p';
+        var v = Lampa.Storage.get(HERO_TRAILER_QUALITY_KEY, '720p') || '720p';
+        if (v === '1080p' || v === '720p' || v === '480p') return v;
+        return '720p';
+      } catch (e) { return '720p'; }
     }
 
     function getHeroTrailerDelayMs() {
@@ -1790,6 +1962,7 @@
       if (!hero || !item) return;
       heroCurrentItem = item;
       updateHeroIndicators();
+      applyHeroInstantClass(item);
       try {
         var id = item.id;
         var type = detectHeroItemType(item);
@@ -1929,11 +2102,9 @@
         },
         left: function () {
           // Browse hero items leftwards; at the first item hand off to the left menu.
-          stopHeroTrailer();
           if (heroItems.length > 1 && heroCurrentIndex > 0) {
             transitionHeroToIndex(heroCurrentIndex - 1);
             startHeroRotation();
-            heroResetIdle();
             return;
           }
           heroClearIdle();
@@ -1942,11 +2113,9 @@
         },
         right: function () {
           // Browse hero items rightwards; stop at the last item.
-          stopHeroTrailer();
           if (heroItems.length > 1 && heroCurrentIndex < heroItems.length - 1) {
             transitionHeroToIndex(heroCurrentIndex + 1);
             startHeroRotation();
-            heroResetIdle();
           }
         },
         back: function () {
@@ -1966,7 +2135,7 @@
 
     var heroTransitionTimer = null;
 
-    function transitionHeroToIndex(idx) {
+    function transitionHeroToIndex(idx, force) {
       if (idx < 0 || idx >= heroItems.length || !heroItems[idx]) return;
       if (idx === heroCurrentIndex) return;
       var hero = document.querySelector('.agnative-hero');
@@ -1974,20 +2143,36 @@
       if (heroTrailerActive) stopHeroTrailer();
       if (heroTransitionTimer) { clearTimeout(heroTransitionTimer); heroTransitionTimer = null; }
       heroCurrentIndex = idx;
-      heroResetIdle();
+      var nextItem = heroItems[idx];
+      heroCurrentItem = nextItem;
       updateHeroIndicators();
-      if (heroAnimationEnabled()) {
+      if (heroItems.length > 1) {
+        var nextIdx = (idx + 1) % heroItems.length;
+        bumpHeroPrefetchPriority(heroItems[nextIdx]);
+      }
+      applyHeroInstantClass(nextItem);
+
+      var earlyTrailer = heroTrailerEnabled() && !heroVideoCooldown && (heroPlayFocused() || force) && !isUiLayerOpen();
+      var lvl = resolvePerfLevel();
+      if (lvl === 'ultra') earlyTrailer = false;
+      if (earlyTrailer) heroStartTrailer(true);
+
+      var instantTransition = hero.classList.contains('agnative-hero--instant-trailer');
+
+      if (heroAnimationEnabled() && !instantTransition) {
         hero.classList.add('agnative-hero--switching');
         heroTransitionTimer = setTimeout(function () {
           heroTransitionTimer = null;
-          renderHeroSlide(heroItems[idx]);
+          renderHeroSlide(nextItem);
+          if (!earlyTrailer && (force || heroPlayFocused())) heroResetIdle(force);
           setTimeout(function () {
             var hh = document.querySelector('.agnative-hero.agnative-hero--switching');
             if (hh) hh.classList.remove('agnative-hero--switching');
           }, 2000);
         }, 320);
       } else {
-        renderHeroSlide(heroItems[idx]);
+        renderHeroSlide(nextItem);
+        if (!earlyTrailer) heroResetIdle(force);
       }
     }
 
@@ -2004,44 +2189,191 @@
 
     function heroPlayFocused() {
       var btn = document.querySelector('.agnative-hero__play');
-      return !!(btn && (btn.classList.contains('focus') || btn.classList.contains('hover')));
+      if (btn && (btn.classList.contains('focus') || btn.classList.contains('hover'))) return true;
+      var hero = document.querySelector('.agnative-hero');
+      if (hero && !hero.classList.contains('agnative-hero--unfocused') && !hero.classList.contains('agnative-hero--hidden')) {
+        try {
+          if (window.Lampa && Lampa.Controller && Lampa.Controller.enabled) {
+            var en = Lampa.Controller.enabled();
+            if (en && en.name === 'agnative_hero') return true;
+          }
+        } catch (e) { }
+      }
+      return false;
+    }
+
+    function cleanupHeroVideoOnly() {
+      if (heroVideoReadyTimer)    { clearTimeout(heroVideoReadyTimer);    heroVideoReadyTimer = null; }
+      if (heroVideoRevealTimer)   { clearTimeout(heroVideoRevealTimer);   heroVideoRevealTimer = null; }
+      if (heroVideoDurationTimer) { clearTimeout(heroVideoDurationTimer); heroVideoDurationTimer = null; }
+      if (heroVideoEl) {
+        try {
+          heroVideoEl.pause();
+          heroVideoEl.removeAttribute('src');
+          heroVideoEl.load();
+        } catch (e) { }
+        if (heroVideoEl.parentNode) {
+          try { heroVideoEl.parentNode.removeChild(heroVideoEl); } catch (e) { }
+        }
+        heroVideoEl = null;
+      }
+      if (heroVideoObjUrl) { videoRevoke(heroVideoObjUrl); heroVideoObjUrl = ''; }
+      heroVideoCurrentSrc = '';
+    }
+
+    function heroVideoUrlsForKey(key, preferredQuality) {
+      var quals = ['1080p', '720p', '480p'];
+      var pref = (preferredQuality === '1080p' || preferredQuality === '720p' || preferredQuality === '480p') ? preferredQuality : '720p';
+      var ordered = [pref];
+      for (var i = 0; i < quals.length; i++) if (quals[i] !== pref) ordered.push(quals[i]);
+      return ordered.map(function (q) { return heroProxyUrl(HERO_VIDEO_BASE + '/' + key + '/' + key + '_' + q + '.mp4'); });
+    }
+
+    function heroReadResolvedTrailer(imdbId) {
+      if (!imdbId) return null;
+      if (heroResolvedTrailer[imdbId]) return heroResolvedTrailer[imdbId];
+      try {
+        var raw = localStorage.getItem(HERO_TRAILER_RESOLVED_LS);
+        if (!raw) return null;
+        var obj = JSON.parse(raw);
+        if (obj && obj[imdbId]) {
+          heroResolvedTrailer[imdbId] = obj[imdbId];
+          return obj[imdbId];
+        }
+      } catch (e) { }
+      return null;
+    }
+
+    function heroWriteResolvedTrailer(imdbId, payload) {
+      if (!imdbId) return;
+      heroResolvedTrailer[imdbId] = payload;
+      try {
+        var raw = localStorage.getItem(HERO_TRAILER_RESOLVED_LS);
+        var obj = raw ? JSON.parse(raw) : {};
+        if (!obj || typeof obj !== 'object') obj = {};
+        obj[imdbId] = payload;
+        localStorage.setItem(HERO_TRAILER_RESOLVED_LS, JSON.stringify(obj));
+      } catch (e) { }
+    }
+
+    function heroForgetResolvedTrailer(imdbId) {
+      if (!imdbId) return;
+      delete heroResolvedTrailer[imdbId];
+      try {
+        var raw = localStorage.getItem(HERO_TRAILER_RESOLVED_LS);
+        if (!raw) return;
+        var obj = JSON.parse(raw);
+        if (obj && obj[imdbId]) {
+          delete obj[imdbId];
+          localStorage.setItem(HERO_TRAILER_RESOLVED_LS, JSON.stringify(obj));
+        }
+      } catch (e) { }
+    }
+
+    function heroNoteNetFailure() {
+      heroVideoNetFailures++;
+      if (heroVideoNetFailures >= HERO_TRAILER_FAIL_LIMIT) {
+        heroVideoCooldown = true;
+        if (heroCooldownTimer) clearTimeout(heroCooldownTimer);
+        heroCooldownTimer = setTimeout(function () {
+          heroVideoCooldown = false;
+          heroVideoNetFailures = 0;
+          heroCooldownTimer = null;
+        }, HERO_COOLDOWN_RESET_MS);
+      }
+    }
+
+    function heroNoteNetSuccess() {
+      heroVideoNetFailures = 0;
+      if (heroVideoCooldown) {
+        heroVideoCooldown = false;
+        if (heroCooldownTimer) { clearTimeout(heroCooldownTimer); heroCooldownTimer = null; }
+      }
+    }
+
+    function heroResolveImdbIdSync(item) {
+      if (!item || !item.id) return '';
+      if (typeof item.imdb_id === 'string' && item.imdb_id.indexOf('tt') === 0) return item.imdb_id;
+      var type = detectHeroItemType(item);
+      var key = 'imdb_id/' + type + '/' + item.id;
+      var v = heroImdbIdCache[key];
+      return (typeof v === 'string' && v.indexOf('tt') === 0) ? v : '';
+    }
+
+    function heroIsTrailerInstant(item) {
+      var imdbId = heroResolveImdbIdSync(item);
+      if (!imdbId) return false;
+      var resolved = heroReadResolvedTrailer(imdbId);
+      if (!resolved || !resolved.key) return false;
+      var url = heroVideoUrlsForKey(resolved.key, getHeroTrailerQuality())[0];
+      return !!heroBlobCached[url];
+    }
+
+    function heroClearInstant() {
+      var hero = document.querySelector('.agnative-hero');
+      if (hero) hero.classList.remove('agnative-hero--instant-trailer');
+    }
+
+    function applyHeroInstantClass(item) {
+      var hero = document.querySelector('.agnative-hero');
+      if (!hero) return;
+      var instant = getHeroTrailerMode() === 'trailers' && heroIsTrailerInstant(item);
+      hero.classList.toggle('agnative-hero--instant-trailer', instant);
+    }
+
+    function resolveImdbId(tmdbId, type, callback, sourceItem) {
+      if (!tmdbId) return callback('');
+      if (sourceItem && typeof sourceItem.imdb_id === 'string' && sourceItem.imdb_id.indexOf('tt') === 0) {
+        return callback(sourceItem.imdb_id);
+      }
+      var cacheKey = 'imdb_id_v2/' + type + '/' + tmdbId;
+      if (heroImdbIdCache[cacheKey] !== undefined) return callback(heroImdbIdCache[cacheKey]);
+      if (heroImdbIdPending[cacheKey]) { heroImdbIdPending[cacheKey].push(callback); return; }
+      heroImdbIdPending[cacheKey] = [callback];
+
+      function finish(value, persist) {
+        heroImdbIdCache[cacheKey] = value || '';
+        if (persist) { try { metaSet(cacheKey, value || ''); } catch (e) {} }
+        var cbs = heroImdbIdPending[cacheKey] || [];
+        delete heroImdbIdPending[cacheKey];
+        for (var i = 0; i < cbs.length; i++) {
+          try { cbs[i](value || ''); } catch (e) {}
+        }
+      }
+
+      metaGet(cacheKey, function (persisted) {
+        if (persisted !== undefined && persisted !== null) {
+          heroImdbIdCache[cacheKey] = persisted || '';
+          var cbs = heroImdbIdPending[cacheKey] || [];
+          delete heroImdbIdPending[cacheKey];
+          for (var i = 0; i < cbs.length; i++) {
+            try { cbs[i](persisted || ''); } catch (e) {}
+          }
+          return;
+        }
+        var url = 'https://api.themoviedb.org/3/' + type + '/' + tmdbId + '/external_ids?api_key=' + TMDB_KEY;
+        fetchJsonWithTimeout(url, 8000).then(function (data) {
+          finish((data && data.imdb_id) || '', !!(data && data.imdb_id));
+        }, function () {
+          finish('', false);
+        });
+      });
     }
 
     function stopHeroTrailer() {
       var hero = document.querySelector('.agnative-hero');
       var wasActive = heroTrailerActive;
       heroTrailerActive = false;
-      if (heroYtPlayer) {
-        try { heroYtPlayer.destroy(); } catch (e) { }
-        heroYtPlayer = null;
-      }
+      heroTrailerAttempt++;
+
+      cleanupHeroVideoOnly();
+
       if (hero) {
         hero.classList.remove('agnative-hero--trailer');
         var wrap = hero.querySelector('.agnative-hero__trailer');
         if (wrap) { wrap.innerHTML = ''; wrap.remove(); }
       }
-      // Resume the slide rotation that was paused while the trailer played.
       if (wasActive && hero && heroItems.length > 1) startHeroRotation();
-    }
-
-    function ensureYoutubeApi(cb) {
-      if (window.YT && window.YT.Player) { cb(); return; }
-      ytApiCallbacks.push(cb);
-      if (ytApiState === 'loading') return;
-      ytApiState = 'loading';
-      var prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = function () {
-        if (typeof prev === 'function') { try { prev(); } catch (e) { } }
-        ytApiState = 'ready';
-        var cbs = ytApiCallbacks.slice();
-        ytApiCallbacks = [];
-        for (var i = 0; i < cbs.length; i++) { try { cbs[i](); } catch (e) { } }
-      };
-      try {
-        var tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        (document.head || document.body).appendChild(tag);
-      } catch (e) { ytApiState = 'none'; }
     }
 
     function heroClearIdle() {
@@ -2049,21 +2381,36 @@
       stopHeroTrailer();
     }
 
-    function heroResetIdle() {
+    function updateHeroTrailerDelayVisibility() {
+      try {
+        var rows = document.querySelectorAll('[data-agnative-hero-trailer-delay]');
+        var show = getHeroTrailerMode() === 'mixed';
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].style.display = show ? '' : 'none';
+        }
+      } catch (e) { }
+    }
+
+    function heroResetIdle(force) {
       if (heroIdleTimer) { clearTimeout(heroIdleTimer); heroIdleTimer = null; }
-      if (!heroTrailerEnabled()) return;
+      var mode = getHeroTrailerMode();
+      if (mode === 'posters') return;
       var lvl = resolvePerfLevel();
-      if (lvl === 'low' || lvl === 'ultra') return;
-      if (!heroPlayFocused()) return;
+      if (lvl === 'ultra') return;
+      if (!force && !heroPlayFocused()) return;
       if (isUiLayerOpen()) return;
-      heroIdleTimer = setTimeout(heroStartTrailer, getHeroTrailerDelayMs());
+      if (heroVideoCooldown) return;
+      var delay = mode === 'trailers' ? 0 : getHeroTrailerDelayMs();
+      heroRevealAfterTs = delay > 0 ? Date.now() + delay : 0;
+      heroStartTrailer(force);
     }
 
     // Validity check after any async step: trailer still wanted, same item, hero present.
-    function heroValid(reqId) {
-      return heroTrailerActive && heroPlayFocused() &&
-        heroCurrentItem && heroCurrentItem.id === reqId &&
-        !!document.querySelector('.agnative-hero');
+    function heroValid(reqId, force) {
+      if (!heroTrailerActive) return false;
+      if (!force && !heroPlayFocused()) return false;
+      if (!heroCurrentItem || heroCurrentItem.id !== reqId) return false;
+      return !!document.querySelector('.agnative-hero');
     }
 
     function heroEnsureTrailerWrap() {
@@ -2086,8 +2433,11 @@
       if (h && heroTrailerActive) h.classList.add('agnative-hero--trailer');
     }
 
-    function heroStartTrailer() {
-      if (!heroTrailerEnabled() || !heroPlayFocused()) return;
+    function heroStartTrailer(force) {
+      if (!heroTrailerEnabled()) return;
+      if (heroTrailerActive) return;
+      if (!force && !heroPlayFocused()) return;
+      if (heroVideoCooldown) return;
       var item = heroCurrentItem;
       if (!item || !item.id) return;
       if (!document.querySelector('.agnative-hero')) return;
@@ -2098,48 +2448,228 @@
       heroTrailerActive = true;
       stopHeroRotation();
 
-      fetchHeroTrailer(item.id, type, function (key) {
-        if (!heroValid(reqId)) { stopHeroTrailer(); return; }
-        if (!key || heroUnplayable[key]) { stopHeroTrailer(); return; }
+      fetchHeroTrailer(item.id, type, function (keys) {
+        if (!heroCurrentItem || heroCurrentItem.id !== reqId) return;
+        if (!heroTrailerActive) return;
+        if (!force && !heroPlayFocused()) { stopHeroTrailer(); return; }
+        if (!document.querySelector('.agnative-hero')) return;
+        if (!keys || !keys.length) { heroClearInstant(); stopHeroTrailer(); return; }
+        attemptHeroTrailerKey(reqId, keys, 0, force);
+      }, item);
+    }
 
-        var wrap = heroEnsureTrailerWrap();
-        if (!wrap) { stopHeroTrailer(); return; }
-        var holder = document.createElement('div');
-        wrap.appendChild(holder);
+    function heroTrailerDurationElapsed(reqId, myAttempt) {
+      if (myAttempt !== heroTrailerAttempt) return;
+      if (!heroValid(reqId, true)) { stopHeroTrailer(); return; }
+      if (heroItems.length > 1) {
+        var nextIdx = (heroCurrentIndex + 1) % heroItems.length;
+        transitionHeroToIndex(nextIdx, true);
+        return;
+      }
+      try {
+        if (heroVideoEl) {
+          heroVideoEl.currentTime = HERO_TRAILER_START_SEC;
+          var p = heroVideoEl.play();
+          if (p && typeof p.catch === 'function') p.catch(function () { });
+        }
+      } catch (e) { }
+      heroVideoDurationTimer = setTimeout(function () {
+        heroTrailerDurationElapsed(reqId, myAttempt);
+      }, getHeroIntervalMs());
+    }
 
-        ensureYoutubeApi(function () {
-          if (!heroValid(reqId) || !holder.parentNode) { stopHeroTrailer(); return; }
-          if (!window.YT || !window.YT.Player) { stopHeroTrailer(); return; }
-          try {
-            heroYtPlayer = new window.YT.Player(holder, {
-              videoId: key,
-              host: 'https://www.youtube-nocookie.com',
-              playerVars: {
-                autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0,
-                modestbranding: 1, rel: 0, playsinline: 1, loop: 1, playlist: key,
-                iv_load_policy: 3, origin: location.origin
-              },
-              events: {
-                onReady: function (e) { try { e.target.mute(); e.target.playVideo(); } catch (_) { } },
-                onError: function () {
-                  // Embedding disabled / unavailable — hide silently, never retry this key.
-                  heroUnplayable[key] = true;
-                  stopHeroTrailer();
-                },
-                onStateChange: function (e) {
-                  if (e && e.data === 1) {            // playing — reveal now
-                    heroRevealTrailer();
-                  } else if (e && e.data === 0) {     // ended — loop
-                    try { e.target.playVideo(); } catch (_) { }
-                  }
-                }
-              }
-            });
-          } catch (e) {
-            stopHeroTrailer();
+    function attemptHeroTrailerKey(reqId, queue, index, force) {
+      if (!heroCurrentItem || heroCurrentItem.id !== reqId) return;
+      if (!heroTrailerActive) return;
+      if (!force && !heroPlayFocused()) { stopHeroTrailer(); return; }
+      if (!document.querySelector('.agnative-hero')) return;
+      if (heroVideoCooldown) { heroClearInstant(); stopHeroTrailer(); return; }
+
+      while (index < queue.length && heroUnplayable[queue[index]]) index++;
+      if (index >= queue.length) { heroClearInstant(); stopHeroTrailer(); return; }
+
+      cleanupHeroVideoOnly();
+
+      var key = queue[index];
+      var myAttempt = ++heroTrailerAttempt;
+      var quality = getHeroTrailerQuality();
+      var urls = heroVideoUrlsForKey(key, quality);
+
+      var wrap = heroEnsureTrailerWrap();
+      if (!wrap) { stopHeroTrailer(); return; }
+
+      function isStale() { return myAttempt !== heroTrailerAttempt; }
+
+      var revealed = false;
+      var urlIdx = 0;
+
+      function abandonKey() {
+        if (isStale()) return;
+        heroUnplayable[key] = true;
+        var item = heroCurrentItem;
+        if (item && item.id) {
+          var type = detectHeroItemType(item);
+          resolveImdbId(item.id, type, function (imdbId) {
+            var resolved = imdbId ? heroReadResolvedTrailer(imdbId) : null;
+            if (resolved && resolved.key === key) heroForgetResolvedTrailer(imdbId);
+          });
+        }
+        cleanupHeroVideoOnly();
+        attemptHeroTrailerKey(reqId, queue, index + 1, force);
+      }
+
+      var fromCacheFlag = false;
+      function tryNextUrl() {
+        if (isStale()) return;
+        while (urlIdx < urls.length && heroUnplayable[urls[urlIdx]]) urlIdx++;
+        if (urlIdx >= urls.length) { abandonKey(); return; }
+        var url = urls[urlIdx++];
+        heroVideoCurrentSrc = url;
+        videoLoad(url, function (resolvedSrc, fromCache) {
+          if (isStale()) {
+            if (resolvedSrc !== url) videoRevoke(resolvedSrc);
+            return;
           }
+          if (heroVideoObjUrl && heroVideoObjUrl !== resolvedSrc) {
+            videoRevoke(heroVideoObjUrl);
+          }
+          heroVideoObjUrl = resolvedSrc !== url ? resolvedSrc : '';
+          fromCacheFlag = !!fromCache;
+          if (fromCache) heroBlobCached[url] = true;
+          if (!heroVideoEl) { abandonKey(); return; }
+          heroVideoEl.muted = true;
+          heroVideoEl.volume = 0;
+          heroVideoEl.setAttribute('muted', '');
+          heroVideoEl.src = resolvedSrc;
+          try { heroVideoEl.load(); } catch (e) { }
+          var attemptPlay = function () {
+            if (isStale() || !heroVideoEl) return;
+            try {
+              heroVideoEl.muted = true;
+              var pp = heroVideoEl.play();
+              if (pp && typeof pp.catch === 'function') pp.catch(function () { });
+            } catch (e) { }
+          };
+          attemptPlay();
+          setTimeout(attemptPlay, 80);
         });
+      }
+
+      var video = document.createElement('video');
+      video.className = 'agnative-hero__video';
+      video.setAttribute('muted', '');
+      video.setAttribute('autoplay', '');
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      video.setAttribute('disablepictureinpicture', '');
+      video.setAttribute('disableremoteplayback', '');
+      video.setAttribute('tabindex', '-1');
+      video.setAttribute('aria-hidden', 'true');
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.autoplay = true;
+      video.controls = false;
+      video.preload = 'auto';
+      video.volume = 0;
+      wrap.appendChild(video);
+      heroVideoEl = video;
+
+      function revealAndStartDuration() {
+        if (isStale()) return;
+        if (!heroTrailerActive || !heroValid(reqId, force)) return;
+        var nowMs = Date.now();
+        if (heroRevealAfterTs && nowMs < heroRevealAfterTs) {
+          if (heroVideoRevealTimer) clearTimeout(heroVideoRevealTimer);
+          heroVideoRevealTimer = setTimeout(revealAndStartDuration, Math.max(50, heroRevealAfterTs - nowMs));
+          return;
+        }
+        if (heroVideoRevealTimer) { clearTimeout(heroVideoRevealTimer); heroVideoRevealTimer = null; }
+        if (heroVideoReadyTimer)  { clearTimeout(heroVideoReadyTimer);  heroVideoReadyTimer = null; }
+        heroRevealTrailer();
+        heroNoteNetSuccess();
+        var item = heroCurrentItem;
+        if (item && item.id) {
+          var type = detectHeroItemType(item);
+          resolveImdbId(item.id, type, function (imdbId) {
+            if (imdbId) heroWriteResolvedTrailer(imdbId, { key: key });
+          });
+        }
+        if (heroVideoDurationTimer) clearTimeout(heroVideoDurationTimer);
+        heroVideoDurationTimer = setTimeout(function () {
+          heroTrailerDurationElapsed(reqId, myAttempt);
+        }, getHeroIntervalMs());
+      }
+
+      var startSec = HERO_TRAILER_START_SEC;
+      var seekFallbackTimer = null;
+      video.addEventListener('loadedmetadata', function () {
+        if (isStale()) return;
+        var dur = isFinite(video.duration) ? video.duration : 0;
+        if (dur > 0 && dur < HERO_TRAILER_START_SEC + 4) startSec = 0;
+        try { video.currentTime = startSec; } catch (e) { }
+        if (startSec > 0) {
+          if (seekFallbackTimer) clearTimeout(seekFallbackTimer);
+          seekFallbackTimer = setTimeout(function () {
+            if (isStale() || revealed) return;
+            startSec = 0;
+            revealed = true;
+            revealAndStartDuration();
+          }, 3500);
+        }
       });
+
+      video.addEventListener('seeked', function () {
+        if (isStale() || revealed) return;
+        if (video.currentTime + 0.5 >= startSec) {
+          revealed = true;
+          revealAndStartDuration();
+        }
+      });
+
+      video.addEventListener('playing', function () {
+        if (isStale() || revealed) return;
+        if (fromCacheFlag && video.currentTime + 0.5 >= startSec) {
+          revealed = true;
+          revealAndStartDuration();
+          return;
+        }
+        if (video.currentTime + 0.5 < startSec) return;
+        revealed = true;
+        revealAndStartDuration();
+      });
+
+      video.addEventListener('timeupdate', function () {
+        if (isStale() || revealed) return;
+        if (video.currentTime + 0.3 >= startSec && video.currentTime > 0.1) {
+          revealed = true;
+          revealAndStartDuration();
+        }
+      });
+
+      video.addEventListener('ended', function () {
+        if (isStale() || !revealed) return;
+        heroTrailerDurationElapsed(reqId, myAttempt);
+      });
+
+      video.addEventListener('error', function () {
+        if (isStale()) return;
+        heroUnplayable[heroVideoCurrentSrc] = true;
+        if (urlIdx < urls.length) {
+          tryNextUrl();
+        } else {
+          heroNoteNetFailure();
+          if (heroVideoCooldown) { abandonKey(); return; }
+          abandonKey();
+        }
+      });
+
+      heroVideoReadyTimer = setTimeout(function () {
+        if (isStale() || revealed) return;
+        abandonKey();
+      }, 10000);
+
+      tryNextUrl();
     }
 
     function buildHeroIndicators(container) {
@@ -2157,10 +2687,12 @@
           dot.setAttribute('data-hero-index', String(idx));
           container.appendChild(dot);
           dot.addEventListener('mouseenter', function () {
+            focusHeroPlayButton();
             transitionHeroToIndex(idx);
             startHeroRotation();
           });
           dot.addEventListener('click', function () {
+            focusHeroPlayButton();
             transitionHeroToIndex(idx);
             startHeroRotation();
           });
@@ -2302,12 +2834,12 @@
               hero.classList.remove('agnative-hero--hidden');
               if (document.body) document.body.classList.remove('agnative-hero-collapsed');
               heroExitDirection = null;
-              heroResetIdle();
+              heroResetIdle(true);
             });
             $$(playBtn).on('hover:blur.agnativeHeroState hover:out.agnativeHeroState', function () {
               hero.classList.add('agnative-hero--unfocused');
               heroClearIdle();
-              if (heroExitDirection === 'down') {
+              if (heroExitDirection === 'down' && getHeroTrailerMode() !== 'trailers') {
                 hero.classList.add('agnative-hero--hidden');
                 if (document.body) document.body.classList.add('agnative-hero-collapsed');
               }
@@ -2322,7 +2854,75 @@
         startHeroRotation();
         ensureHeroController();
         if (!isUiLayerOpen()) setTimeout(focusHeroPlayButton, 100);
+        if (heroTrailerEnabled() && !heroVideoCooldown) {
+          scheduleHeroPrefetch(heroItems.slice());
+        }
       } catch (e) { }
+    }
+
+    function scheduleHeroPrefetch(items) {
+      if (!items || !items.length) return;
+      for (var i = 0; i < items.length; i++) heroPrefetchQueue.push(items[i]);
+      if (heroPrefetchActive) return;
+      heroPrefetchActive = true;
+      setTimeout(runHeroPrefetchStep, 600);
+    }
+
+    function bumpHeroPrefetchPriority(item) {
+      if (!item) return;
+      for (var i = 0; i < heroPrefetchQueue.length; i++) {
+        if (heroPrefetchQueue[i] === item) heroPrefetchQueue.splice(i--, 1);
+      }
+      heroPrefetchQueue.unshift(item);
+      if (!heroPrefetchActive && heroTrailerEnabled() && !heroVideoCooldown) {
+        heroPrefetchActive = true;
+        setTimeout(runHeroPrefetchStep, 0);
+      }
+    }
+
+    function runHeroPrefetchStep() {
+      if (heroVideoCooldown) { heroPrefetchQueue = []; heroPrefetchActive = false; return; }
+      if (!heroTrailerEnabled()) { heroPrefetchQueue = []; heroPrefetchActive = false; return; }
+      var item = heroPrefetchQueue.shift();
+      if (!item) { heroPrefetchActive = false; return; }
+      if (!item.id) { setTimeout(runHeroPrefetchStep, 50); return; }
+
+      var stepDone = false;
+      var stepWatchdog = setTimeout(function () {
+        if (stepDone) return;
+        stepDone = true;
+        setTimeout(runHeroPrefetchStep, 100);
+      }, 20000);
+      function finishStep(delay) {
+        if (stepDone) return;
+        stepDone = true;
+        clearTimeout(stepWatchdog);
+        setTimeout(runHeroPrefetchStep, delay || 250);
+      }
+
+      var type = detectHeroItemType(item);
+      resolveImdbId(item.id, type, function (imdbId) {
+        if (!imdbId) { finishStep(250); return; }
+        var resolved = heroReadResolvedTrailer(imdbId);
+        if (resolved && resolved.key) {
+          var url = heroVideoUrlsForKey(resolved.key, getHeroTrailerQuality())[0];
+          videoPreload(url, function (ok) {
+            if (ok) heroBlobCached[url] = true;
+            finishStep(250);
+          });
+          return;
+        }
+        fetchImdbVideos(imdbId, function (keys) {
+          if (!keys || !keys.length) { finishStep(250); return; }
+          var firstKey = keys[0];
+          var prefetchUrl = heroVideoUrlsForKey(firstKey, getHeroTrailerQuality())[0];
+          heroWriteResolvedTrailer(imdbId, { key: firstKey });
+          videoPreload(prefetchUrl, function (ok) {
+            if (ok) heroBlobCached[prefetchUrl] = true;
+            finishStep(400);
+          });
+        });
+      }, item);
     }
 
     function isUiLayerOpen() {
@@ -3154,20 +3754,63 @@
           }
         });
 
+        try {
+          if (window.Lampa && Lampa.Storage) {
+            var currentMode = Lampa.Storage.get(HERO_TRAILER_MODE_KEY, '');
+            if (currentMode === 'video') {
+              Lampa.Storage.set(HERO_TRAILER_MODE_KEY, 'mixed');
+            } else if (currentMode !== 'posters' && currentMode !== 'mixed' && currentMode !== 'trailers') {
+              var legacy = Lampa.Storage.get(HERO_TRAILER_KEY, 'true');
+              var migrated = (legacy === false || legacy === 'false' || legacy === 'off') ? 'posters' : 'mixed';
+              Lampa.Storage.set(HERO_TRAILER_MODE_KEY, migrated);
+            }
+          }
+        } catch (e) { }
+
         Lampa.SettingsApi.addParam({
           component: HERO_SETTINGS_COMPONENT,
           param: {
-            name: HERO_TRAILER_KEY,
-            type: 'trigger',
-            default: 'true'
+            name: HERO_TRAILER_MODE_KEY,
+            type: 'select',
+            values: {
+              posters:  t('val_trailer_mode_posters'),
+              mixed:    t('val_trailer_mode_mixed'),
+              trailers: t('val_trailer_mode_trailers')
+            },
+            default: 'mixed'
           },
           field: {
-            name: t('set_hero_trailer_name'),
-            description: t('set_hero_trailer_desc')
+            name: t('set_hero_trailer_mode_name'),
+            description: t('set_hero_trailer_mode_desc')
           },
           onChange: function () {
-            heroClearIdle();
-            if (heroTrailerEnabled()) heroResetIdle();
+            updateHeroTrailerDelayVisibility();
+            showReloadConfirm(function () {
+              try { Lampa.Controller.toggle('settings_component'); } catch (e) { }
+            });
+          }
+        });
+
+        Lampa.SettingsApi.addParam({
+          component: HERO_SETTINGS_COMPONENT,
+          param: {
+            name: HERO_TRAILER_QUALITY_KEY,
+            type: 'select',
+            values: {
+              '480p':  '480p',
+              '720p':  '720p',
+              '1080p': '1080p'
+            },
+            default: '720p'
+          },
+          field: {
+            name: t('set_hero_trailer_quality_name'),
+            description: t('set_hero_trailer_quality_desc')
+          },
+          onChange: function () {
+            showReloadConfirm(function () {
+              try { Lampa.Controller.toggle('settings_component'); } catch (e) { }
+            });
           }
         });
 
@@ -3190,6 +3833,12 @@
           field: {
             name: t('set_hero_trailer_delay_name'),
             description: t('set_hero_trailer_delay_desc')
+          },
+          onRender: function (item) {
+            try { item.attr('data-agnative-hero-trailer-delay', '1'); } catch (e) { }
+            if (getHeroTrailerMode() !== 'mixed') {
+              try { item.hide(); } catch (e) { }
+            }
           },
           onChange: function () {
             heroResetIdle();
@@ -3951,13 +4600,13 @@
         'body.' + BODY_CLASS + ' .items-line__body { padding-left:0 !important; }',
         'body.' + BODY_CLASS + ' .items-line__title { font-size:1em !important; line-height:1.2 !important; font-weight:700 !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line { display:flex !important; gap:1.5em !important; padding-left:1.15em !important; padding-right:1.15em !important; }',
-        'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small) { padding: .6em .55em !important; display:flex !important; flex-direction:column !important; align-items:center !important; text-align:center !important; width:9em !important; border-radius:1.2em !important; background:transparent !important; color:inherit !important; transition: transform .28s cubic-bezier(.34,1.4,.64,1) !important; will-change: transform !important; }',
+        'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small) { padding: .6em .55em !important; display:flex !important; flex-direction:column !important; align-items:center !important; text-align:center !important; width:9em !important; border-radius:1.2em !important; background:transparent !important; color:inherit !important; transition: transform .28s cubic-bezier(.34,1.4,.64,1) !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small) .full-person__photo { width:6.8em !important; height:6.8em !important; border-radius:50% !important; margin:0 0 .65em !important; background-color:rgba(255,255,255,.06) !important; background-size:cover !important; background-position:50% 50% !important; overflow:hidden !important; flex-shrink:0 !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), inset 0 0 0 1px rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.18), 0 12px 28px rgba(0,0,0,.22) !important; transition: box-shadow .28s ease, filter .28s ease !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small) .full-person__photo > img { width:100% !important; height:100% !important; border-radius:50% !important; object-fit:cover !important; object-position:center 20% !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small) .full-person__body { display:flex !important; flex-direction:column !important; align-items:center !important; padding:0 !important; margin:0 !important; max-width:100% !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small) .full-person__name { font-size:1em !important; font-weight:600 !important; color:rgba(255,255,255,.95) !important; margin:0 0 .2em !important; line-height:1.2 !important; max-width:100% !important; overflow:hidden !important; text-overflow:ellipsis !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small) .full-person__role { font-size:.82em !important; font-weight:400 !important; color:rgba(255,255,255,.58) !important; margin:0 !important; line-height:1.25 !important; max-width:100% !important; overflow:hidden !important; text-overflow:ellipsis !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; }',
-        'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).focus, body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).hover { background:transparent !important; color:inherit !important; transform: scale(1.06) translateY(-4px) !important; z-index:10 !important; position:relative !important; }',
+        'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).focus, body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).hover { background:transparent !important; color:inherit !important; transform: scale(1.06) translateY(-4px) !important; z-index:10 !important; position:relative !important; will-change: transform !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).focus .full-person__photo, body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).hover .full-person__photo { box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 0 0 2px rgba(86,141,255,.92), 0 18px 42px rgba(0,0,0,.28), 0 8px 20px rgba(0,0,0,.16) !important; filter: saturate(1.06) brightness(1.02) !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).focus .full-person__name, body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).hover .full-person__name { color:#fff !important; }',
         'body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).focus .full-person__role, body.' + BODY_CLASS + ' .scroll__body.mapping--line .full-person:not(.full-person--small).hover .full-person__role { color:rgba(255,255,255,.78) !important; }',
@@ -4040,8 +4689,8 @@
         'body.' + BODY_CLASS + ' .card.focus .card__view { transform: translateY(-.08em) scale(1.06) !important; filter: saturate(1.06) brightness(1.02) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 0 0 2px rgba(86,141,255,.92), 0 18px 42px rgba(0,0,0,.26), 0 8px 20px rgba(0,0,0,.14) !important; }',
         'body.' + BODY_CLASS + ' .card.hover .card__view { transform: translateY(-.04em) scale(1.03) !important; filter: saturate(1.02) brightness(1.01) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 10px 24px rgba(0,0,0,.16) !important; }',
         'body.' + BODY_CLASS + ' .card.focus::after, body.' + BODY_CLASS + ' .card.hover::after, body.' + BODY_CLASS + ' .card__view::before, body.' + BODY_CLASS + ' .card__view::after { display:none !important; content:none !important; }',
-        'body.' + BODY_CLASS + ' .card { transition: transform .28s cubic-bezier(.34,1.4,.64,1) !important; will-change: transform !important; transform-style: preserve-3d !important; }',
-        'body.' + BODY_CLASS + ' .card.focus, body.' + BODY_CLASS + ' .card.hover, body.' + BODY_CLASS + ' .card.traverse { transform: scale(1.07) translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important; z-index: 10 !important; position: relative !important; }',
+        'body.' + BODY_CLASS + ' .card { transition: transform .28s cubic-bezier(.34,1.4,.64,1) !important; }',
+        'body.' + BODY_CLASS + ' .card.focus, body.' + BODY_CLASS + ' .card.hover, body.' + BODY_CLASS + ' .card.traverse { transform: scale(1.07) translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important; z-index: 10 !important; position: relative !important; will-change: transform !important; transform-style: preserve-3d !important; }',
         'body.' + BODY_CLASS + ' .card.focus ~ .card, body.' + BODY_CLASS + ' .card.hover ~ .card { transform: translateX(4px) !important; transition: transform .22s ease !important; }',
         'body.' + BODY_CLASS + '[' + PERF_ATTR + '="low"] .card.focus, body.' + BODY_CLASS + '[' + PERF_ATTR + '="low"] .card.hover, body.' + BODY_CLASS + '[' + PERF_ATTR + '="low"] .card.traverse { transform: scale(1.05) translateY(-3px) !important; }',
         'body.' + BODY_CLASS + '[' + PERF_ATTR + '="ultra"] .card { transition: none !important; will-change: auto !important; }',
@@ -4053,8 +4702,8 @@
         'body.' + BODY_CLASS + '[' + CARD_SIZE_ATTR + '="lg"] .card-episode { width:19.4em !important; }',
         'body.' + BODY_CLASS + '[' + CARD_SIZE_ATTR + '="xl"] .card-episode { width:21.2em !important; }',
         'body.' + BODY_CLASS + ' .card-episode.focus, body.' + BODY_CLASS + ' .card-episode.hover, body.' + BODY_CLASS + ' .card-episode.focus .card-episode__body, body.' + BODY_CLASS + ' .card-episode.hover .card-episode__body { border:0 !important; outline:0 !important; box-shadow:none !important; background:transparent !important; }',
-        'body.' + BODY_CLASS + ' .card-episode { transition: transform .28s cubic-bezier(.34,1.4,.64,1), box-shadow .28s ease !important; will-change: transform !important; }',
-        'body.' + BODY_CLASS + ' .card-episode.focus, body.' + BODY_CLASS + ' .card-episode.hover, body.' + BODY_CLASS + ' .card-episode.traverse { transform: scale(1.05) translateY(-4px) !important; box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 6px 16px rgba(0,0,0,.3) !important; z-index: 10 !important; position: relative !important; }',
+        'body.' + BODY_CLASS + ' .card-episode { transition: transform .28s cubic-bezier(.34,1.4,.64,1), box-shadow .28s ease !important; }',
+        'body.' + BODY_CLASS + ' .card-episode.focus, body.' + BODY_CLASS + ' .card-episode.hover, body.' + BODY_CLASS + ' .card-episode.traverse { transform: scale(1.05) translateY(-4px) !important; box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 6px 16px rgba(0,0,0,.3) !important; z-index: 10 !important; position: relative !important; will-change: transform !important; }',
         'body.' + BODY_CLASS + ' .card-episode__body { background:transparent !important; border:0 !important; outline:0 !important; box-shadow:none !important; padding:0 !important; margin:0 !important; display:block !important; overflow:visible !important; }',
         'body.' + BODY_CLASS + ' .card-episode .full-episode { position:relative !important; display:block !important; background:transparent !important; border:0 !important; box-shadow:none !important; padding:0 !important; margin:0 !important; overflow:visible !important; transform-origin:center center !important; transition: transform .28s cubic-bezier(.22,.61,.36,1) !important; }',
         'body.' + BODY_CLASS + ' .card-episode .full-episode__img { position:relative !important; width:100% !important; height:0 !important; padding-bottom:56.25% !important; margin:0 !important; border-radius:1.55em !important; overflow:hidden !important; clip-path: inset(0 round 1.55em); -webkit-clip-path: inset(0 round 1.55em); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1.5px 1px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.14), 0 12px 28px rgba(0,0,0,.16) !important; transition: box-shadow .28s ease, filter .28s ease !important; border: 0.1em solid transparent !important; box-sizing: border-box !important; }',
@@ -4074,7 +4723,7 @@
         'body.' + BODY_CLASS + ' .card-episode.hover .full-episode__img { filter: saturate(1.02) brightness(1.01) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 10px 24px rgba(0,0,0,.16) !important; }',
         'body.' + BODY_CLASS + ':not(.' + GLARE_CLASS + ') .card-episode.focus .full-episode { transform: translateY(-.08em) scale(1.06) !important; }',
         'body.' + BODY_CLASS + ':not(.' + GLARE_CLASS + ') .card-episode.hover .full-episode { transform: translateY(-.04em) scale(1.03) !important; }',
-        'body.' + GLARE_CLASS + ' .card, body.' + GLARE_CLASS + ' .card-episode, body.' + GLARE_CLASS + ' .full-start-new__poster { will-change: transform; transform-style: preserve-3d; }',
+        'body.' + GLARE_CLASS + ' .card.focus, body.' + GLARE_CLASS + ' .card.hover, body.' + GLARE_CLASS + ' .card-episode.focus, body.' + GLARE_CLASS + ' .card-episode.hover, body.' + GLARE_CLASS + ' .full-start-new__poster.focus, body.' + GLARE_CLASS + ' .full-start-new__poster.hover { will-change: transform; transform-style: preserve-3d; }',
         'body.' + GLARE_CLASS + ' .card__view, body.' + GLARE_CLASS + ' .full-episode__img, body.' + GLARE_CLASS + ' .full-start-new__poster { position: relative; overflow: hidden; }',
         'body.' + GLARE_CLASS + ' .card .card__view::after, body.' + GLARE_CLASS + ' .card-episode .full-episode__img::after, body.' + GLARE_CLASS + ' .full-start-new__poster::after { content:"" !important; display:block !important; position:absolute; inset:-10%; border-radius:inherit; background: radial-gradient(ellipse at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,.20) 0%, rgba(255,255,255,.16) 12%, rgba(255,255,255,.10) 26%, rgba(255,255,255,.05) 42%, rgba(255,255,255,.02) 58%, rgba(255,255,255,0) 78%) !important; opacity:0; filter: blur(18px); transition: opacity .22s ease, transform .22s ease; pointer-events:none; z-index:8; mix-blend-mode: screen; }',
         'body.' + GLARE_CLASS + ' .card.focus .card__view::after, body.' + GLARE_CLASS + ' .card.hover .card__view::after, body.' + GLARE_CLASS + ' .card-episode.focus .full-episode__img::after, body.' + GLARE_CLASS + ' .card-episode.hover .full-episode__img::after, body.' + GLARE_CLASS + ' .full-start-new__poster.focus::after, body.' + GLARE_CLASS + ' .full-start-new__poster.hover::after { opacity: 1 !important; }',
@@ -4829,9 +5478,16 @@
         '@keyframes agnative-hero-drift { from { transform: scale(1.08) translate3d(-2%, -1.5%, 0); } to { transform: scale(1.08) translate3d(2%, 1.5%, 0); } }',
         '@keyframes agnative-hero-breathe { 0% { transform: scale(1) translate3d(0,0,0); } 50% { transform: scale(1.04) translate3d(0,0,0); } 100% { transform: scale(1) translate3d(0,0,0); } }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--hidden .agnative-hero__bg { opacity:0; }',
-        'body.' + BODY_CLASS + ' .agnative-hero__trailer { position:absolute; top:0; left:0; right:0; bottom:0; overflow:hidden; border-radius:1.5em; opacity:0; transition:opacity .6s ease; pointer-events:none; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__trailer { position:absolute; top:0; left:0; right:0; bottom:0; overflow:hidden; border-radius:1.5em; opacity:0; transition:opacity .6s ease-out; pointer-events:none; background:#000; will-change:opacity; }',
         'body.' + BODY_CLASS + ' .agnative-hero--trailer .agnative-hero__trailer { opacity:1; }',
-        'body.' + BODY_CLASS + ' .agnative-hero__trailer iframe { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100vw; height:56.25vw; min-width:100%; min-height:100%; border:0; pointer-events:none; }',
+        'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--instant-trailer .agnative-hero__bg { transition:opacity .6s ease-out !important; }',
+        'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--instant-trailer.agnative-hero--trailer .agnative-hero__bg { opacity:0 !important; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__trailer .agnative-hero__video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; border:0; display:block; pointer-events:none; background:#000; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__video::-webkit-media-controls { display:none !important; -webkit-appearance:none !important; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__video::-webkit-media-controls-panel { display:none !important; -webkit-appearance:none !important; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__video::-webkit-media-controls-play-button { display:none !important; -webkit-appearance:none !important; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__video::-webkit-media-controls-start-playback-button { display:none !important; -webkit-appearance:none !important; opacity:0 !important; }',
+        'body.' + BODY_CLASS + ' .agnative-hero__video::-webkit-media-controls-overlay-play-button { display:none !important; -webkit-appearance:none !important; }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--hidden .agnative-hero__trailer { opacity:0; }',
         'body.' + BODY_CLASS + ' .activity--active .items-line, body.' + BODY_CLASS + ' .activity--active .scroll__content { position:relative; z-index:10; }',
         'body.' + BODY_CLASS + ' .agnative-hero.agnative-hero--visible { opacity:1; }',
@@ -6105,66 +6761,105 @@
       return true;
     }
 
-    function pickYoutubeTrailer(results) {
-      if (!results || !results.length) return null;
-      // Only real trailers/teasers — never clips, featurettes, behind-the-scenes etc.
-      var yt = [];
-      for (var i = 0; i < results.length; i++) {
-        var v = results[i];
-        if (v && v.site === 'YouTube' && v.key && (v.type === 'Trailer' || v.type === 'Teaser')) yt.push(v);
+    function pickImdbTrailerKeys(videos) {
+      if (!videos || !videos.length) return [];
+      var trailers = [];
+      var promos = [];
+      for (var i = 0; i < videos.length; i++) {
+        var v = videos[i];
+        if (!v || !v.id) continue;
+        var t = (v.type || '').toLowerCase();
+        if (t === 'trailer') trailers.push(v.id);
+        else if (t === 'promotional' || t === 'promo') promos.push(v.id);
       }
-      if (!yt.length) return null;
-      function score(v) {
-        var s = 0;
-        if (v.type === 'Trailer') s += 100;        // trailer over teaser
-        if (v.official === true) s += 20;           // official over fan/promo
-        if (typeof v.size === 'number') s += Math.min(v.size, 2160) / 1000; // prefer HD
-        return s;
+      var out = [];
+      var seen = {};
+      function add(arr) {
+        for (var j = 0; j < arr.length; j++) {
+          if (!seen[arr[j]]) { seen[arr[j]] = 1; out.push(arr[j]); }
+        }
       }
-      yt.sort(function (a, b) { return score(b) - score(a); });
-      return yt[0].key;
+      add(trailers); add(promos);
+      return out;
     }
 
-    function fetchHeroTrailer(id, type, callback) {
-      if (!id) return callback(null);
-      var lang = getLogoLang();
-      var cacheKey = 'trailer/' + type + '/' + id + '/' + lang;
-
-      if (cacheKey in heroTrailerCache) return callback(heroTrailerCache[cacheKey]);
-
-      if (heroTrailerPending[cacheKey]) {
-        heroTrailerPending[cacheKey].push(callback);
-        return;
+    function fetchJsonWithTimeout(url, ms) {
+      try {
+        if (typeof fetch !== 'function') return Promise.reject(new Error('no fetch'));
+        if (typeof AbortController === 'undefined') {
+          return fetch(url).then(function (r) { return r.json(); });
+        }
+        var ctrl = new AbortController();
+        var to = setTimeout(function () { try { ctrl.abort(); } catch (e) { } }, ms);
+        function done() { clearTimeout(to); }
+        return fetch(url, { signal: ctrl.signal })
+          .then(function (r) { return r.json(); })
+          .then(function (data) { done(); return data; }, function (err) { done(); throw err; });
+      } catch (e) {
+        return Promise.reject(e);
       }
+    }
+
+    function fetchImdbVideos(imdbId, callback) {
+      if (!imdbId) return callback([]);
+      var cacheKey = 'imdb_videos_v2/' + imdbId;
+      if (cacheKey in heroTrailerCache) return callback(heroTrailerCache[cacheKey]);
+      if (heroTrailerPending[cacheKey]) { heroTrailerPending[cacheKey].push(callback); return; }
       heroTrailerPending[cacheKey] = [callback];
 
-      function finish(key) {
-        var val = key || null;
+      function finish(keys, persist) {
+        var val = (keys && keys.length) ? keys : [];
         heroTrailerCache[cacheKey] = val;
-        metaSet(cacheKey, val);
+        if (persist) { try { metaSet(cacheKey, val); } catch (e) {} }
         var cbs = heroTrailerPending[cacheKey] || [];
         delete heroTrailerPending[cacheKey];
-        for (var i = 0; i < cbs.length; i++) cbs[i](val);
+        for (var i = 0; i < cbs.length; i++) {
+          try { cbs[i](val); } catch (e) {}
+        }
       }
 
       metaGet(cacheKey, function (persisted) {
         if (persisted !== undefined) {
-          heroTrailerCache[cacheKey] = persisted;
+          var arr = Array.isArray(persisted) ? persisted : [];
+          heroTrailerCache[cacheKey] = arr;
           var cbs = heroTrailerPending[cacheKey] || [];
           delete heroTrailerPending[cacheKey];
-          for (var i = 0; i < cbs.length; i++) cbs[i](persisted);
+          for (var i = 0; i < cbs.length; i++) {
+            try { cbs[i](arr); } catch (e) {}
+          }
           return;
         }
-
-        var base = 'https://api.themoviedb.org/3/' + type + '/' + id + '/videos?api_key=' + TMDB_KEY;
-        fetch(base + '&language=' + lang).then(function (r) { return r.json(); }).then(function (data) {
-          var key = pickYoutubeTrailer(data && data.results);
-          if (key || lang === 'en') return finish(key);
-          fetch(base + '&language=en').then(function (r) { return r.json(); }).then(function (d2) {
-            finish(pickYoutubeTrailer(d2 && d2.results));
-          }).catch(function () { finish(null); });
-        }).catch(function () { finish(null); });
+        var url = HERO_IMDB_API_BASE + '/titles/' + encodeURIComponent(imdbId) + '/videos?pageSize=50&types=trailer&types=promotional';
+        fetchJsonWithTimeout(url, 9000).then(function (data) {
+          if (data && data.error) { finish([], false); return; }
+          finish(pickImdbTrailerKeys(data && data.videos), true);
+        }, function () {
+          var fallback = HERO_IMDB_API_BASE + '/titles/' + encodeURIComponent(imdbId) + '/videos?pageSize=50';
+          fetchJsonWithTimeout(fallback, 9000).then(function (d2) {
+            finish(pickImdbTrailerKeys(d2 && d2.videos), true);
+          }, function () { finish([], false); });
+        });
       });
+    }
+
+    function fetchHeroTrailer(tmdbId, type, callback, sourceItem) {
+      if (!tmdbId) return callback([]);
+      if (heroVideoCooldown) return callback([]);
+
+      resolveImdbId(tmdbId, type, function (imdbId) {
+        if (!imdbId) return callback([]);
+
+        var resolved = heroReadResolvedTrailer(imdbId);
+        if (resolved && resolved.key) {
+          fetchImdbVideos(imdbId, function (all) {
+            var queue = [resolved.key];
+            for (var i = 0; i < all.length; i++) if (all[i] !== resolved.key) queue.push(all[i]);
+            callback(queue);
+          });
+          return;
+        }
+        fetchImdbVideos(imdbId, callback);
+      }, sourceItem);
     }
 
     function fetchLogo(id, type, callback) {
