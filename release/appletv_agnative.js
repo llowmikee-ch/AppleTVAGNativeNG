@@ -19,6 +19,7 @@
     GLARE_KEY: 'appletv_agnative_topnav_glare_enabled',
     CARD_ANIM_KEY: 'appletv_agnative_card_anim',
     CARD_ANIM_ATTR: 'data-agnative-card-anim',
+    CARD_ANIM_ORBIT_KEY: 'appletv_agnative_card_anim_orbit',
     TOPNAV_ITEMS_KEY: 'appletv_agnative_topnav_items',
     LOGO_LANG_KEY: 'appletv_agnative_logo_lang',
     FONT_SIZE_KEY: 'appletv_agnative_font_size',
@@ -76,7 +77,7 @@
     SETTINGS_HIDE_COMPONENT: 'agnative_settings_hide'
   };
 
-  const PLUGIN_VERSION = '0.4.2';
+  const PLUGIN_VERSION = '0.4.3';
   const PLUGIN_AUTHORS = 'llowmikee, nrsua, gwynnbleiidd, arabianq, ang3el7z, dimir96';
 
   const ru = {
@@ -92,6 +93,8 @@
     val_card_anim_off: 'Выключено',
     val_card_anim_veoveo: 'Наклон veoveo.ru (arabian_q)',
     val_card_anim_appletv: 'DepthTV (based on marcreichel)',
+    set_card_anim_orbit_name: 'Авто-анимация на ТВ',
+    set_card_anim_orbit_desc: 'На сфокусированной карточке имитировать круговое движение',
     set_topnav_name: 'Пункты Topnav', set_topnav_desc: 'Меню вверху страницы',
     set_topnav_title: 'Пункты верхнего меню',
     set_topnav_item_desc: 'Пункт menu_list: ',
@@ -151,10 +154,7 @@
     val_card_image_backdrop: 'Бекдроп + Логотип',
     val_card_image_poster: 'Постер',
     set_logo_title_name: 'Название на локальном языке',
-    set_logo_title_desc: 'Показывать название на локальном языке, если логотип загружен только на английском',
-    val_logo_title_off: 'Нет',
-    val_logo_title_below: 'Да, снизу логотипа',
-    val_logo_title_above: 'Да, сверху логотипа',
+    set_logo_title_desc: 'Показывать название на локальном языке, если логотип или постер не на локальном',
     set_hero_name: 'Hero баннер',
     set_hero_desc: 'Большой баннер вверху главного экрана',
     set_hero_title: 'Настройки Hero баннера',
@@ -224,6 +224,8 @@
     val_card_anim_off: 'Off',
     val_card_anim_veoveo: 'veoveo.ru tilt (arabian_q)',
     val_card_anim_appletv: 'DepthTV (based on marcreichel)',
+    set_card_anim_orbit_name: 'Auto animation on TV',
+    set_card_anim_orbit_desc: 'Simulate a circular motion on the focused card',
     set_topnav_name: 'Topnav items', set_topnav_desc: 'Top page menu',
     set_topnav_title: 'Top navigation items',
     set_topnav_item_desc: 'menu_list item: ',
@@ -283,10 +285,7 @@
     val_card_image_backdrop: 'Backdrop + Logo',
     val_card_image_poster: 'Poster',
     set_logo_title_name: 'Local language title',
-    set_logo_title_desc: 'Show title in local language when only an English logo is available',
-    val_logo_title_off: 'No',
-    val_logo_title_below: 'Yes, below logo',
-    val_logo_title_above: 'Yes, above logo',
+    set_logo_title_desc: 'Show title in local language when the logo or poster is not in local',
     set_hero_name: 'Hero banner',
     set_hero_desc: 'Large banner at the top of the main screen',
     set_hero_title: 'Hero banner settings',
@@ -356,6 +355,8 @@
     val_card_anim_off: 'Вимкнено',
     val_card_anim_veoveo: 'Нахил veoveo.ru (arabian_q)',
     val_card_anim_appletv: 'DepthTV (based on marcreichel)',
+    set_card_anim_orbit_name: 'Авто-анімація на ТВ',
+    set_card_anim_orbit_desc: 'На сфокусованій картці імітувати круговий рух',
     set_topnav_name: 'Пункти Topnav', set_topnav_desc: 'Меню вгорі сторінки',
     set_topnav_title: 'Пункти верхнього меню',
     set_topnav_item_desc: 'Пункт menu_list: ',
@@ -415,10 +416,7 @@
     val_card_image_backdrop: 'Бекдроп + Логотип',
     val_card_image_poster: 'Постер',
     set_logo_title_name: 'Назва на локальній мові',
-    set_logo_title_desc: 'Показувати назву локальною мовою, якщо логотип завантажено лише англійською',
-    val_logo_title_off: 'Ні',
-    val_logo_title_below: 'Так, знизу логотипу',
-    val_logo_title_above: 'Так, зверху логотипу',
+    set_logo_title_desc: 'Показувати назву локальною мовою, якщо логотип або постер не на локальній',
     set_hero_name: 'Hero банер',
     set_hero_desc: 'Великий банер вгорі головного екрану',
     set_hero_title: 'Налаштування Hero банера',
@@ -488,6 +486,8 @@
     val_card_anim_off: 'Выключана',
     val_card_anim_veoveo: 'Нахіл veoveo.ru (arabian_q)',
     val_card_anim_appletv: 'DepthTV (based on marcreichel)',
+    set_card_anim_orbit_name: 'Аўта-анімацыя на ТВ',
+    set_card_anim_orbit_desc: 'На сфакусаванай картцы імітаваць кругавы рух',
     set_topnav_name: 'Пункты Topnav', set_topnav_desc: 'Меню ўверсе старонкі',
     set_topnav_title: 'Пункты верхняга меню',
     set_topnav_item_desc: 'Пункт menu_list: ',
@@ -547,10 +547,7 @@
     val_card_image_backdrop: 'Бэкдроп + Лагатып',
     val_card_image_poster: 'Постэр',
     set_logo_title_name: 'Назва на мясцовай мове',
-    set_logo_title_desc: 'Паказваць назву на мясцовай мове, калі лагатып загружаны толькі на англійскай',
-    val_logo_title_off: 'Не',
-    val_logo_title_below: 'Так, пад лагатыкам',
-    val_logo_title_above: 'Так, над лагатыкам',
+    set_logo_title_desc: 'Паказваць назву на мясцовай мове, калі лагатып або плакат не на мясцовай',
     set_hero_name: 'Hero банер',
     set_hero_desc: 'Вялікі банер угары галоўнага экрана',
     set_hero_title: 'Налады Hero банера',
@@ -966,6 +963,7 @@
       GLARE_KEY,
       CARD_ANIM_KEY,
       CARD_ANIM_ATTR,
+      CARD_ANIM_ORBIT_KEY,
       TOPNAV_ITEMS_KEY,
       LOGO_LANG_KEY,
       FONT_SIZE_KEY,
@@ -1152,11 +1150,12 @@
       } catch (e) { return 'ru'; }
     }
 
-    function getLogoTitleFallback() {
+    function logoTitleEnabled() {
       try {
-        if (!window.Lampa || !Lampa.Storage) return 'off';
-        return Lampa.Storage.get(LOGO_TITLE_KEY, 'off') || 'off';
-      } catch (e) { return 'off'; }
+        if (!window.Lampa || !Lampa.Storage) return false;
+        var v = Lampa.Storage.get(LOGO_TITLE_KEY, 'false');
+        return v === true || v === 'true' || v === 'on';
+      } catch (e) { return false; }
     }
 
     function getFontSize() {
@@ -1319,6 +1318,14 @@
 
     function glareEnabled() {
       return getCardAnim() === 'veoveo';
+    }
+
+    function cardAnimOrbitEnabled() {
+      try {
+        if (!window.Lampa || !Lampa.Storage) return false;
+        var v = Lampa.Storage.get(CARD_ANIM_ORBIT_KEY, 'false');
+        return v === true || v === 'true' || v === 'on';
+      } catch (e) { return false; }
     }
 
     function sceneActive() {
@@ -1663,6 +1670,7 @@
         Lampa.Storage.set(ENABLE_KEY, 'on');
         Lampa.Storage.set(GLARE_KEY, 'on');
         Lampa.Storage.set(CARD_ANIM_KEY, 'veoveo');
+        Lampa.Storage.set(CARD_ANIM_ORBIT_KEY, 'false');
         Lampa.Storage.set(UI_LANG_KEY, 'auto');
         Lampa.Storage.set(LOGO_LANG_KEY, 'auto');
         Lampa.Storage.set(FONT_SIZE_KEY, 'md');
@@ -1678,7 +1686,7 @@
         Lampa.Storage.set(POSTER_QUALITY_KEY, 'w500');
         Lampa.Storage.set(OVERLAY_ALIGN_KEY, 'start');
         Lampa.Storage.set(CARD_IMAGE_MODE_KEY, 'backdrop');
-        Lampa.Storage.set(LOGO_TITLE_KEY, 'off');
+        Lampa.Storage.set(LOGO_TITLE_KEY, 'false');
         Lampa.Storage.set(HERO_ALIGN_KEY, 'top');
         Lampa.Storage.set(HERO_INDICATORS_KEY, 'false');
         Lampa.Storage.set(HERO_ANIMATION_KEY, 'true');
@@ -3342,6 +3350,20 @@
           }
         });
 
+        Lampa.SettingsApi.addParam({
+          component: SETTINGS_COMPONENT,
+          param: {
+            name: CARD_ANIM_ORBIT_KEY,
+            type: 'trigger',
+            default: 'false'
+          },
+          field: {
+            name: t('set_card_anim_orbit_name'),
+            description: t('set_card_anim_orbit_desc')
+          },
+          onChange: function () { }
+        });
+
         // ═══════════════════════════════════════════════════════════
         // 5. Логотипы и постеры
         // ═══════════════════════════════════════════════════════════
@@ -3377,17 +3399,23 @@
           }
         });
 
+        try {
+          if (window.Lampa && Lampa.Storage) {
+            var legacyLogoTitle = Lampa.Storage.get(LOGO_TITLE_KEY, 'false');
+            if (legacyLogoTitle === 'below' || legacyLogoTitle === 'above' || legacyLogoTitle === 'on') {
+              Lampa.Storage.set(LOGO_TITLE_KEY, 'true');
+            } else if (legacyLogoTitle === 'off') {
+              Lampa.Storage.set(LOGO_TITLE_KEY, 'false');
+            }
+          }
+        } catch (e) { }
+
         Lampa.SettingsApi.addParam({
           component: SETTINGS_COMPONENT,
           param: {
             name: LOGO_TITLE_KEY,
-            type: 'select',
-            values: {
-              off: t('val_logo_title_off'),
-              below: t('val_logo_title_below'),
-              above: t('val_logo_title_above')
-            },
-            default: 'off'
+            type: 'trigger',
+            default: 'false'
           },
           field: {
             name: t('set_logo_title_name'),
@@ -4460,6 +4488,7 @@
         '}',
 
         'body.' + BODY_CLASS + '[' + PERF_ATTR + '="ultra"] .settings-param[data-name="' + CARD_ANIM_KEY + '"] { display: none !important; }',
+        'body.' + BODY_CLASS + ':not([' + CARD_ANIM_ATTR + '="appletv"]) .settings-param[data-name="' + CARD_ANIM_ORBIT_KEY + '"] { display: none !important; }',
         'body.' + BODY_CLASS + '[' + RATING_ATTR + '="off"] .settings-param[data-name="' + RATING_STYLE_KEY + '"] { display: none !important; }',
         'body.' + BODY_CLASS + '[' + CARD_IMAGE_MODE_ATTR + '="poster"] .settings-param[data-name="' + LOGO_SIZE_KEY + '"] { display: none !important; }',
         'body.' + BODY_CLASS + ' .wrap__content.layer--height.layer--width::after,',
@@ -4705,7 +4734,12 @@
         'body.' + BODY_CLASS + '[' + CARD_SIZE_ATTR + '="xl"] .items-line .card.card--button-compact, body.' + BODY_CLASS + '[' + CARD_SIZE_ATTR + '="xl"] .items-line .card.streaming-card--button-compact, body.' + BODY_CLASS + '[' + CARD_SIZE_ATTR + '="xl"] .items-line .card.card--genre-compact { width:10.6em !important; }',
         // Scale text inside (logo labels, etc) accordingly
         'body.' + BODY_CLASS + ' .card.card--button-compact .card__view, body.' + BODY_CLASS + ' .card.streaming-card--button-compact .card__view, body.' + BODY_CLASS + ' .card.card--genre-compact .card__view { font-size:.85em !important; }',
-        'body.' + BODY_CLASS + ' .card .card-watched { transform: scale(.8) !important; bottom: 0 !important; max-height: 100% !important; overflow: hidden !important; }',
+        'body.' + BODY_CLASS + ' .card .card-watched { position:absolute !important; left:.55em !important; right:.55em !important; bottom:.55em !important; top:auto !important; z-index:3 !important; display:block !important; opacity:0 !important; transform:translateY(.45em) scale(.94) !important; transition: opacity .18s ease 0s, transform .18s ease 0s !important; pointer-events:none !important; background:rgba(15,17,22,.72) !important; border:1px solid rgba(255,255,255,.09) !important; border-radius:.85em !important; box-shadow:0 10px 22px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.07) !important; backdrop-filter:blur(16px) saturate(140%) !important; -webkit-backdrop-filter:blur(16px) saturate(140%) !important; overflow:hidden !important; max-height:calc(100% - 1.2em) !important; }',
+        'body.' + BODY_CLASS + ' .card.focus .card-watched, body.' + BODY_CLASS + ' .card.hover .card-watched { opacity:1 !important; transform:translateY(0) scale(1) !important; transition: opacity .32s ease 1s, transform .14s ease-out !important; }',
+        'body.' + BODY_CLASS + ' .card .card-watched__inner { padding:.5em .75em .6em !important; }',
+        'body.' + BODY_CLASS + ' .card .card-watched__body { font-size:.7em !important; line-height:1.25 !important; }',
+        'body.' + BODY_CLASS + ' .card .card-watched__item { margin-top:.4em !important; }',
+        'body.' + BODY_CLASS + ' .card .card-watched__item:first-child { margin-top:0 !important; }',
         'body.' + BODY_CLASS + ' .card .card__view { padding-bottom:56.25% !important; margin-bottom:0 !important; border-radius:1.55em !important; overflow:hidden !important; clip-path: inset(0 round 1.55em); -webkit-clip-path: inset(0 round 1.55em); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1.5px 1px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.14), 0 12px 28px rgba(0,0,0,.16) !important; transition: transform .28s cubic-bezier(.22,.61,.36,1), box-shadow .28s ease, filter .28s ease, opacity .18s ease !important; border: 0.1em solid transparent !important; box-sizing: border-box !important; }',
         'body.' + BODY_CLASS + ' .card[data-nfx-switched="1"] .card__view { opacity:1 !important; }',
         'body.' + BODY_CLASS + ' .card__view > *, body.' + BODY_CLASS + ' .card__view img, body.' + BODY_CLASS + ' .card__view .card__img, body.' + BODY_CLASS + ' .card__view .card__image, body.' + BODY_CLASS + ' .card__img, body.' + BODY_CLASS + ' .card__image, body.' + BODY_CLASS + ' .card__filter, body.' + BODY_CLASS + ' .card__filter::before, body.' + BODY_CLASS + ' .card__filter::after { border-radius:1.55em !important; }',
@@ -4780,7 +4814,7 @@
         'body.' + BODY_CLASS + ' .card.focus .nfx-card-overlay { transform: translateZ(18px) translateY(-.02em); }',
         'body.' + BODY_CLASS + ' .nfx-card-overlay__logo, body.' + BODY_CLASS + ' img.nfx-card-overlay__logo { display:block !important; opacity:1 !important; visibility:visible !important; max-height:2.55em !important; max-width:82% !important; margin-bottom:.28em !important; border-radius:0 !important; clip-path:none !important; -webkit-clip-path:none !important; mask-image:none !important; -webkit-mask-image:none !important; overflow:visible !important; }',
         'body.' + BODY_CLASS + ' .nfx-card-overlay__title { color:#fff; font-size:1.02em !important; line-height:1.14 !important; font-weight:800 !important; text-shadow:0 1px 2px rgba(0,0,0,.95), 0 2px 8px rgba(0,0,0,.85), 0 4px 16px rgba(0,0,0,.7) !important; white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; }',
-        'body.' + BODY_CLASS + ' .nfx-card-overlay__local-title { color:#fff; font-size:.82em !important; line-height:1.18 !important; font-weight:700 !important; text-shadow:0 1px 2px rgba(0,0,0,.95), 0 2px 8px rgba(0,0,0,.85), 0 4px 14px rgba(0,0,0,.7) !important; white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; opacity:.95; margin-bottom:.18em !important; }',
+        'body.' + BODY_CLASS + ' .nfx-card-overlay__local-title { color:rgba(255,255,255,.92) !important; opacity:.85 !important; font-size:.78em !important; line-height:1.2 !important; font-weight:600 !important; letter-spacing:.01em !important; text-shadow:0 1px 2px rgba(0,0,0,.95), 0 2px 6px rgba(0,0,0,.85), 0 3px 12px rgba(0,0,0,.7) !important; white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; margin-bottom:.22em !important; }',
         'body.' + BODY_CLASS + ' .nfx-card-overlay__meta { color:rgba(255,255,255,.92); font-size:.74em !important; margin-top:.2em !important; line-height:1.28 !important; white-space:normal !important; max-width:100% !important; text-shadow:0 1px 2px rgba(0,0,0,.95), 0 2px 6px rgba(0,0,0,.85), 0 3px 12px rgba(0,0,0,.7) !important; }',
         'body.' + BODY_CLASS + ' .nfx-card-logo { position:absolute; top:.7em; left:.82em; z-index:4; display:inline-flex !important; opacity:1 !important; visibility:visible !important; align-items:center; justify-content:center; padding:.38em .88em; border-radius:.92em; background:rgba(12,14,20,.62); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.96); font-size:.74em; font-weight:800; letter-spacing:.05em; backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); pointer-events:none; }',
         'body.' + BODY_CLASS + ' { --agnative-scale: 1; --agnative-category-scale: 1; }',
@@ -7100,8 +7134,26 @@
         } else if (!imgEl.hasAttribute('data-nfx-original-bg')) {
           imgEl.setAttribute('data-nfx-original-bg', imgEl.style.backgroundImage || '');
         }
-        if (data.backdrop_path) {
-          setImgUrl(Lampa.TMDB.image('t/p/' + getBackdropQuality() + data.backdrop_path));
+        if (useHorizontal) {
+          if (data.backdrop_path) {
+            setImgUrl(Lampa.TMDB.image('t/p/' + getBackdropQuality() + data.backdrop_path));
+          }
+        } else {
+          var bTmdbType = data.name ? 'tv' : 'movie';
+          if (data.poster_path) {
+            setImgUrl(Lampa.TMDB.image('t/p/' + getPosterQuality() + data.poster_path));
+          }
+          if (data.id) {
+            fetchCleanPoster(data.id, bTmdbType, function (cleanPath) {
+              if (cleanPath) {
+                setImgUrl(Lampa.TMDB.image('t/p/' + getPosterQuality() + cleanPath));
+              } else if (data.backdrop_path) {
+                setImgUrl(Lampa.TMDB.image('t/p/' + getBackdropQuality() + data.backdrop_path));
+              }
+            });
+          } else if (data.backdrop_path) {
+            setImgUrl(Lampa.TMDB.image('t/p/' + getBackdropQuality() + data.backdrop_path));
+          }
         }
       }
 
@@ -7133,10 +7185,14 @@
 
         function buildPosterOverlay() {
           if (!pView || pView.querySelector('.nfx-card-overlay')) return;
-          if (pMetaHtml) {
+          var pLocalLang = getLogoLang();
+          var pTitleText = data.title || data.name || '';
+          var pPosterNonLocal = pTitleText && pLocalLang !== 'en' && data.original_language && data.original_language !== pLocalLang;
+          var pTitleHtml = (logoTitleEnabled() && pPosterNonLocal) ? '<div class="nfx-card-overlay__local-title">' + escapeHtml(pTitleText) + '</div>' : '';
+          if (pTitleHtml || pMetaHtml) {
             var pOverlay = document.createElement('div');
             pOverlay.className = 'nfx-card-overlay';
-            pOverlay.innerHTML = pMetaHtml;
+            pOverlay.innerHTML = pTitleHtml + pMetaHtml;
             pView.appendChild(pOverlay);
           }
           if (badgeEnabled() && (data.title || data.name)) {
@@ -7218,18 +7274,13 @@
             });
             titleDiv.replaceWith(img);
 
-            var fallback = getLogoTitleFallback();
             var logoLang = getLogoLang();
             var isNonLocalLogo = logoLang !== 'en' && logo.iso_639_1 && logo.iso_639_1 !== logoLang;
-            if (fallback !== 'off' && isNonLocalLogo && title) {
+            if (logoTitleEnabled() && isNonLocalLogo && title) {
               var localTitle = document.createElement('div');
               localTitle.className = 'nfx-card-overlay__local-title';
               localTitle.textContent = title;
-              if (fallback === 'above') {
-                overlay.insertBefore(localTitle, img);
-              } else if (fallback === 'below') {
-                img.parentNode.insertBefore(localTitle, img.nextSibling);
-              }
+              img.parentNode.insertBefore(localTitle, img.nextSibling);
             }
           }
         });
@@ -7429,7 +7480,16 @@
       if (window.Lampa && Lampa.Storage && Lampa.Storage.listener && Lampa.Storage.listener.follow) {
         try {
           Lampa.Storage.listener.follow('change', function (e) {
-            if (e && (e.name === CARD_ANIM_KEY || e.name === GLARE_KEY)) cardAnimMode = getCardAnim();
+            if (!e) return;
+            if (e.name === CARD_ANIM_KEY || e.name === GLARE_KEY) cardAnimMode = getCardAnim();
+            if (e.name === CARD_ANIM_KEY || e.name === CARD_ANIM_ORBIT_KEY) {
+              if (orbitActive()) {
+                var focused = document.querySelector('.card.focus, .card-episode.focus, .full-start-new__poster.focus');
+                if (focused) startOrbit(focused);
+              } else {
+                stopOrbit();
+              }
+            }
           });
         } catch (err) { }
       }
@@ -7507,6 +7567,94 @@
         s.removeProperty('--atv-ly');
         if (activeCard === card) { activeCard = null; activeRect = null; }
       });
+
+      var orbitCard = null;
+      var orbitStart = 0;
+      var orbitRaf = null;
+      var ORBIT_PERIOD = 4200;
+      var ORBIT_RADIUS = 0.9;
+
+      function orbitActive() {
+        return cardAnimMode === 'appletv' && cardAnimOrbitEnabled() && resolvePerfLevel() !== 'ultra';
+      }
+
+      function clearOrbitVars(card) {
+        if (!card) return;
+        var s = card.style;
+        s.removeProperty('--atv-rx');
+        s.removeProperty('--atv-ry');
+        s.removeProperty('--atv-lx');
+        s.removeProperty('--atv-ly');
+      }
+
+      function stopOrbit() {
+        if (orbitRaf) { cancelAnimationFrame(orbitRaf); orbitRaf = null; }
+        if (orbitCard) { clearOrbitVars(orbitCard); orbitCard = null; }
+      }
+
+      function inMouseMode() {
+        return document.body.classList.contains('agnative-mouse-mode');
+      }
+
+      function stepOrbit(now) {
+        orbitRaf = null;
+        if (!orbitCard || !orbitActive() || inMouseMode()) { stopOrbit(); return; }
+        var t = (now - orbitStart) / ORBIT_PERIOD;
+        var ang = t * Math.PI * 2;
+        var xPct = Math.cos(ang) * ORBIT_RADIUS;
+        var yPct = Math.sin(ang) * ORBIT_RADIUS;
+        var s = orbitCard.style;
+        s.setProperty('--atv-rx', (yPct * -4) + 'deg');
+        s.setProperty('--atv-ry', (xPct * 4) + 'deg');
+        s.setProperty('--atv-lx', (xPct * 0.3) + 'em');
+        s.setProperty('--atv-ly', (yPct * 0.3) + 'em');
+        orbitRaf = requestAnimationFrame(stepOrbit);
+      }
+
+      function startOrbit(card) {
+        if (!card || !orbitActive() || inMouseMode()) return;
+        if (orbitCard === card && orbitRaf) return;
+        if (orbitCard && orbitCard !== card) clearOrbitVars(orbitCard);
+        orbitCard = card;
+        orbitStart = performance.now();
+        if (!orbitRaf) orbitRaf = requestAnimationFrame(stepOrbit);
+      }
+
+      function findFocusedCard() {
+        return document.querySelector('.card.focus, .card-episode.focus, .full-start-new__poster.focus');
+      }
+
+      window.addEventListener('keydown', function (e) {
+        var k = e.keyCode;
+        if (k !== 13 && k !== 32 && !(k >= 37 && k <= 40)) return;
+        if (!orbitActive()) return;
+        var tries = 0;
+        function tryStart() {
+          tries++;
+          if (!orbitActive() || inMouseMode()) return;
+          if (orbitRaf) return;
+          var focused = findFocusedCard();
+          if (focused) startOrbit(focused);
+          else if (tries < 8) setTimeout(tryStart, 40);
+        }
+        setTimeout(tryStart, 0);
+      }, { capture: true });
+
+      if (window.MutationObserver) {
+        var orbitObs = new MutationObserver(function (muts) {
+          if (!orbitActive() || inMouseMode()) { if (orbitCard) stopOrbit(); return; }
+          for (var i = 0; i < muts.length; i++) {
+            var target = muts[i].target;
+            if (!target || !target.classList || target.nodeType !== 1) continue;
+            if (!target.matches || !target.matches(GLARE_SEL)) continue;
+            if (target.classList.contains('focus')) startOrbit(target);
+            else if (orbitCard === target) stopOrbit();
+          }
+        });
+        try {
+          orbitObs.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+        } catch (e) { }
+      }
     }
 
     function safePatch() {
