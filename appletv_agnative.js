@@ -6220,7 +6220,7 @@
           var idx = -1;
           for (var i = 0; i < lines.length; i++) { if (lines[i] === line) { idx = i; break; } }
           for (var j = 0; j < lines.length; j++) {
-            var near = idx === -1 ? j < 4 : (j >= idx - 1 && j <= idx + 3);
+            var near = idx === -1 ? j < 6 : (j >= idx - 2 && j <= idx + 5);
             if (near) lines[j].classList.add('agnative-cv-near');
             else lines[j].classList.remove('agnative-cv-near');
           }
