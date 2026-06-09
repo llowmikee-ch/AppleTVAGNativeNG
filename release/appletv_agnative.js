@@ -4635,6 +4635,10 @@
         'body.' + BODY_CLASS + ' .agnative-topnav-rightdock .agnative-topnav-clock.hover, body.' + BODY_CLASS + ' .agnative-topnav-rightdock .agnative-topnav-clock.focus, body.' + BODY_CLASS + ' .agnative-topnav-rightdock .agnative-topnav-right__profile.hover, body.' + BODY_CLASS + ' .agnative-topnav-rightdock .agnative-topnav-right__profile.focus { background:rgba(255,255,255,.14) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.10) !important; transform:translateY(-.02em); }',
         'body.' + BODY_CLASS + ' .agnative-topnav-clock { position:absolute; right:1.15em; top:.46em; z-index:20; display:inline-flex; align-items:center; justify-content:center; min-width:4.2em; height:2.6em; padding:0 .95em; border-radius:999px; background:rgba(22,24,30,.26); border:1px solid rgba(255,255,255,.10); box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.12); backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%); color:rgba(255,255,255,.95); font-size:.92em; font-weight:700; letter-spacing:.01em; }',
         'body.' + BODY_CLASS + ' .agnative-topnav-clock.selector { cursor:pointer; }',
+        /* While vertically navigating, backdrop blur under the fixed topnav is
+           re-sampled every frame — pause it and compensate with a denser bg. */
+        'body.' + BODY_CLASS + '.agnative-nav-scrolling .agnative-topnav-shell__inner, body.' + BODY_CLASS + '.agnative-nav-scrolling .agnative-topnav-rightdock, body.' + BODY_CLASS + '.agnative-nav-scrolling .agnative-topnav-clock { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; background:rgba(22,24,30,.62) !important; }',
+        'body.' + BODY_CLASS + '.agnative-nav-scrolling .agnative-hero__indicators { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; background:rgba(18,18,20,.62) !important; }',
         'body.' + BODY_CLASS + ' .agnative-control-panel { position:absolute; right:1.15em; top:3.7em; z-index:26; width:18.8em; padding:.72em; border-radius:1.18em; background:rgba(40,48,62,.76); border:1px solid rgba(255,255,255,.13); box-shadow:0 18px 48px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.09); backdrop-filter:blur(22px) saturate(136%); -webkit-backdrop-filter:blur(22px) saturate(136%); opacity:0; transform:translateY(-.35em) scale(.98); pointer-events:none; transition:opacity .2s ease, transform .2s ease; }',
         'body.' + BODY_CLASS + ' .agnative-control-panel.is-open { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }',
         'body.' + BODY_CLASS + ' .agnative-control-panel__title { font-size:1.28em; font-weight:600; color:rgba(255,255,255,.94); padding:.18em .15em .52em; }',
@@ -6192,6 +6196,32 @@
       head.addEventListener('wheel', forwardWheelBelowTopnav, { passive: false });
     }
 
+    var navScrollGuardBound = false;
+    var navScrollTimer = null;
+
+    function markNavScrolling() {
+      if (!document.body || !document.body.classList.contains(BODY_CLASS)) return;
+      if (navScrollTimer) clearTimeout(navScrollTimer);
+      else document.body.classList.add('agnative-nav-scrolling');
+      navScrollTimer = setTimeout(function () {
+        navScrollTimer = null;
+        if (document.body) document.body.classList.remove('agnative-nav-scrolling');
+      }, 260);
+    }
+
+    // Backdrop blur on the fixed topnav is re-sampled every frame while content
+    // moves beneath it — a major cause of vertical-scroll jank. Pause the blur
+    // during vertical navigation (keys / wheel) and restore it right after.
+    function attachScrollPerfGuard() {
+      if (navScrollGuardBound) return;
+      navScrollGuardBound = true;
+      window.addEventListener('keydown', function (e) {
+        var k = e.keyCode;
+        if (k === 38 || k === 40) markNavScrolling();
+      }, true);
+      window.addEventListener('wheel', markNavScrolling, { passive: true });
+    }
+
     function neutralizeMenuController() {
       if (menuControllerNeutralized) return;
       if (!window.Lampa || !Lampa.Controller || typeof Lampa.Controller.add !== 'function') return;
@@ -7709,6 +7739,7 @@
       applyHiddenSettingsSectionsCSS();
       observeCards();
       bindInputModeDetector();
+      attachScrollPerfGuard();
       initGlareRuntime();
       neutralizeMenuController();
       patchActivityPushForMenu();
