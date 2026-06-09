@@ -3701,13 +3701,9 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload, videoLoad, vide
       'body.' + BODY_CLASS + ' .agnative-control-panel__tile.selector .agnative-control-panel__label { font-size:.95em; font-weight:700; line-height:1.15; text-align:left; }',
       'body.' + BODY_CLASS + ' .agnative-control-panel__tile.selector.hover, body.' + BODY_CLASS + ' .agnative-control-panel__tile.selector.focus { background:rgba(255,255,255,.18); box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 0 0 1px rgba(255,255,255,.12); transform:translateY(-.02em); }',
       'body.' + BODY_CLASS + ' .items-line--type-default { min-height:auto !important; padding-top:0 !important; padding-bottom:.12em !important; margin-bottom:.32em !important; transition:transform .35s cubic-bezier(.22,.61,.36,1) !important; }',
-      /* Skip layout/paint of shelf rows far outside the viewport: identical
-         visuals, much less work per frame during vertical navigation. The
-         intrinsic size is an estimate used only until a row first renders.
-         Rows near the focused one are forced visible (pre-rendered runway)
-         so stepping down never reveals a not-yet-painted row. */
-      'body.' + BODY_CLASS + ' .activity--active .items-line { content-visibility:auto; contain-intrinsic-size: auto 14em; }',
-      'body.' + BODY_CLASS + ' .activity--active .items-line.agnative-cv-near { content-visibility:visible !important; }',
+      /* Isolate layout/style invalidation per shelf row: cheaper recalcs
+         during vertical navigation, with no render skipping (no pop-in). */
+      'body.' + BODY_CLASS + ' .activity--active .items-line { contain: layout style; }',
       'body.' + BODY_CLASS + ' .items-line.layer--visible.layer--render.items-line--type-default { padding-top:0 !important; }',
       'body.' + BODY_CLASS + ' .items-line--type-default .items-line__head { margin-bottom:1.1em !important; min-height:auto !important; padding-top:0 !important; padding-bottom:.45em !important; padding-left:2.5em !important; padding-right:2.5em !important; font-size:1em !important; }',
       'body.' + BODY_CLASS + ' .items-line__more.selector { font-size:.7em !important; padding:.3em .6em !important; opacity:.85 !important; }',
@@ -5255,75 +5251,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload, videoLoad, vide
     head.addEventListener('wheel', forwardWheelBelowTopnav, { passive: false });
   }
 
-  // ── content-visibility runway ──────────────────────────────────────────
-  // Rows use content-visibility:auto (offscreen shelves skip layout/paint).
-  // To avoid a row blinking in unpainted while stepping down, keep a runway
-  // of rows around the focused one force-rendered via .agnative-cv-near.
-  var cvTrackerBound = false;
-  var cvWindowRaf = null;
-
-  function updateCvWindow(focusEl) {
-    if (cvWindowRaf) return;
-    cvWindowRaf = requestAnimationFrame(function () {
-      cvWindowRaf = null;
-      try {
-        var line = focusEl && focusEl.closest ? focusEl.closest('.items-line') : null;
-        var scrollContent = line ? line.parentNode :
-          document.querySelector('.activity--active .scroll__content');
-        if (!scrollContent || !scrollContent.querySelectorAll) return;
-        var lines = scrollContent.querySelectorAll('.items-line');
-        if (!lines.length) return;
-        var idx = -1;
-        for (var i = 0; i < lines.length; i++) { if (lines[i] === line) { idx = i; break; } }
-        if (idx === -1) {
-          // No focused row found (focus on hero/menu) — only seed the initial
-          // runway once; never collapse an existing window back to the top.
-          for (var s = 0; s < lines.length; s++) {
-            if (lines[s].classList.contains('agnative-cv-near')) return;
-          }
-        }
-        for (var j = 0; j < lines.length; j++) {
-          var near = idx === -1 ? j < 6 : (j >= idx - 2 && j <= idx + 5);
-          if (near) lines[j].classList.add('agnative-cv-near');
-          else lines[j].classList.remove('agnative-cv-near');
-        }
-      } catch (e) { }
-    });
-  }
-
-  function findFocusedCvCard() {
-    return document.querySelector(
-      '.activity--active .items-line .card.focus, .activity--active .items-line .card.hover, ' +
-      '.activity--active .items-line .card-episode.focus, .items-line .card.focus'
-    );
-  }
-
-  function scheduleCvWindowUpdate() {
-    // Lampa moves the .focus class after its own key handling — sample the
-    // focused card a moment later (and once more after the scroll animation).
-    setTimeout(function () { updateCvWindow(findFocusedCvCard()); }, 60);
-    setTimeout(function () { updateCvWindow(findFocusedCvCard()); }, 340);
-  }
-
-  function attachCvWindowTracker() {
-    if (cvTrackerBound) return;
-    cvTrackerBound = true;
-    window.addEventListener('keydown', function (e) {
-      var k = e.keyCode;
-      if (k === 38 || k === 40 || k === 33 || k === 34) scheduleCvWindowUpdate();
-    }, true);
-    window.addEventListener('wheel', scheduleCvWindowUpdate, { passive: true });
-    // Mouse hover path (jQuery delegate works where Lampa events bubble).
-    try {
-      var $$ = window.$ || window.jQuery;
-      if ($$) {
-        $$(document).on('hover:focus.agnativeCv hover:hover.agnativeCv', '.card, .card-episode', function () {
-          updateCvWindow(this);
-        });
-      }
-    } catch (e) { }
-  }
-
   function neutralizeMenuController() {
     if (menuControllerNeutralized) return;
     if (!window.Lampa || !Lampa.Controller || typeof Lampa.Controller.add !== 'function') return;
@@ -6506,8 +6433,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload, videoLoad, vide
     for (var i = 0; i < cards.length; i++) switchCardToBackdrop(cards[i]);
     var eps = container.querySelectorAll('.card-episode');
     for (var j = 0; j < eps.length; j++) switchEpisodeCardToBackdrop(eps[j]);
-    // Seed the pre-rendered runway from the currently focused card (if any).
-    updateCvWindow(container.querySelector ? (container.querySelector('.card.focus') || null) : null);
   }
 
   function injectExplorerBackButton(scope) {
@@ -6844,7 +6769,6 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload, videoLoad, vide
     applyHiddenSettingsSectionsCSS();
     observeCards();
     bindInputModeDetector();
-    attachCvWindowTracker();
     initGlareRuntime();
     neutralizeMenuController();
     patchActivityPushForMenu();
