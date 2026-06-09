@@ -6219,6 +6219,13 @@
           if (!lines.length) return;
           var idx = -1;
           for (var i = 0; i < lines.length; i++) { if (lines[i] === line) { idx = i; break; } }
+          if (idx === -1) {
+            // No focused row found (focus on hero/menu) — only seed the initial
+            // runway once; never collapse an existing window back to the top.
+            for (var s = 0; s < lines.length; s++) {
+              if (lines[s].classList.contains('agnative-cv-near')) return;
+            }
+          }
           for (var j = 0; j < lines.length; j++) {
             var near = idx === -1 ? j < 6 : (j >= idx - 2 && j <= idx + 5);
             if (near) lines[j].classList.add('agnative-cv-near');
@@ -6228,14 +6235,37 @@
       });
     }
 
+    function findFocusedCvCard() {
+      return document.querySelector(
+        '.activity--active .items-line .card.focus, .activity--active .items-line .card.hover, ' +
+        '.activity--active .items-line .card-episode.focus, .items-line .card.focus'
+      );
+    }
+
+    function scheduleCvWindowUpdate() {
+      // Lampa moves the .focus class after its own key handling — sample the
+      // focused card a moment later (and once more after the scroll animation).
+      setTimeout(function () { updateCvWindow(findFocusedCvCard()); }, 60);
+      setTimeout(function () { updateCvWindow(findFocusedCvCard()); }, 340);
+    }
+
     function attachCvWindowTracker() {
       if (cvTrackerBound) return;
-      var $$ = window.$ || window.jQuery;
-      if (!$$) return;
       cvTrackerBound = true;
-      $$(document).on('hover:focus.agnativeCv hover:hover.agnativeCv', '.card, .card-episode', function () {
-        updateCvWindow(this);
-      });
+      window.addEventListener('keydown', function (e) {
+        var k = e.keyCode;
+        if (k === 38 || k === 40 || k === 33 || k === 34) scheduleCvWindowUpdate();
+      }, true);
+      window.addEventListener('wheel', scheduleCvWindowUpdate, { passive: true });
+      // Mouse hover path (jQuery delegate works where Lampa events bubble).
+      try {
+        var $$ = window.$ || window.jQuery;
+        if ($$) {
+          $$(document).on('hover:focus.agnativeCv hover:hover.agnativeCv', '.card, .card-episode', function () {
+            updateCvWindow(this);
+          });
+        }
+      } catch (e) { }
     }
 
     function neutralizeMenuController() {
