@@ -3701,6 +3701,10 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload, videoLoad, vide
       'body.' + BODY_CLASS + ' .agnative-control-panel__tile.selector .agnative-control-panel__label { font-size:.95em; font-weight:700; line-height:1.15; text-align:left; }',
       'body.' + BODY_CLASS + ' .agnative-control-panel__tile.selector.hover, body.' + BODY_CLASS + ' .agnative-control-panel__tile.selector.focus { background:rgba(255,255,255,.18); box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 0 0 1px rgba(255,255,255,.12); transform:translateY(-.02em); }',
       'body.' + BODY_CLASS + ' .items-line--type-default { min-height:auto !important; padding-top:0 !important; padding-bottom:.12em !important; margin-bottom:.32em !important; transition:transform .35s cubic-bezier(.22,.61,.36,1) !important; }',
+      /* Skip layout/paint of shelf rows far outside the viewport: identical
+         visuals, much less work per frame during vertical navigation. The
+         intrinsic size is an estimate used only until a row first renders. */
+      'body.' + BODY_CLASS + ' .activity--active .items-line { content-visibility:auto; contain-intrinsic-size: auto 14em; }',
       'body.' + BODY_CLASS + ' .items-line.layer--visible.layer--render.items-line--type-default { padding-top:0 !important; }',
       'body.' + BODY_CLASS + ' .items-line--type-default .items-line__head { margin-bottom:1.1em !important; min-height:auto !important; padding-top:0 !important; padding-bottom:.45em !important; padding-left:2.5em !important; padding-right:2.5em !important; font-size:1em !important; }',
       'body.' + BODY_CLASS + ' .items-line__more.selector { font-size:.7em !important; padding:.3em .6em !important; opacity:.85 !important; }',
@@ -6163,6 +6167,7 @@ import { metaGet, metaSet, prune, clearAll, imgLoad, imgPreload, videoLoad, vide
     function setImgUrl(url) {
       if (!imgEl) return;
       if (imgEl.tagName === 'IMG') {
+        imgEl.decoding = 'async'; // keep poster decode off the main thread
         imgLoad(url, function (src) {
           imgEl.onload = function () { if (src !== url) URL.revokeObjectURL(src); };
           imgEl.onerror = function () { if (src !== url) URL.revokeObjectURL(src); };
